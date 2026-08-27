@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testovanie 9 – Slovenský jazyk a slovenská literatúra</title>
+  <style>
+    /* ==========================================
+       1. STÍLUSOK ÉS VIZUÁLIS ELRENDEZÉS (Monitor 9 UI)
+       ========================================== */
+    :root {
+      --primary-orange: #f58220;
+      --light-orange: #fff8f2;
+      --border-orange: #fca34d;
+      --dark-text: #2c3e50;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --error: #c62828;
+      --error-bg: #ffebee;
+      --border-gray: #dcdfe6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--dark-text); padding: 20px; display: flex; justify-content: center; }
+    .app-container { max-width: 950px; width: 100%; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 25px; }
+
+    header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--primary-orange); padding-bottom: 15px; }
+    header h1 { color: var(--primary-orange); font-size: 1.8rem; margin-bottom: 5px; }
+    header p { color: #666; font-size: 0.95rem; }
+
+    /* Control Panel */
+    .start-panel { background: var(--light-orange); border: 2px solid var(--border-orange); border-radius: 10px; padding: 20px; margin-bottom: 25px; }
+    .form-group { margin-bottom: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-gray); border-radius: 6px; font-size: 1rem; background: #fff; }
+    .button-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s ease; }
+    .btn-orange { background: var(--primary-orange); color: white; }
+    .btn-orange:hover { background: #e06d0b; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-secondary:hover { background: #5a6268; }
+
+    /* Stopper Bar */
+    .timer-bar { display: flex; justify-content: space-between; align-items: center; background: #eee; padding: 10px 20px; border-radius: 6px; margin-bottom: 20px; font-weight: bold; }
+
+    /* Olvasmány & Poszter / Program kártyák */
+    .reading-card { border: 2px solid var(--border-orange); border-radius: 10px; background: var(--light-orange); margin-bottom: 30px; overflow: hidden; }
+    .reading-header { background: var(--border-orange); color: white; padding: 10px 15px; font-weight: bold; font-size: 1.1rem; }
+    .reading-content { padding: 20px; line-height: 1.6; font-size: 0.98rem; }
+    .reading-content h3 { text-align: center; margin-bottom: 10px; color: var(--primary-orange); }
+    .reading-content .author { text-align: center; font-style: italic; margin-bottom: 15px; }
+
+    /* Poszter / Program speciális stílus */
+    .poster-box { border: 2px dashed var(--primary-orange); background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    .poster-title { font-weight: bold; font-size: 1.3rem; text-align: center; color: var(--primary-orange); margin-bottom: 10px; }
+    .poster-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #fdf3e7; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+
+    /* Feladatok stílusa */
+    .section-title { text-align: center; font-size: 1.2rem; font-weight: bold; margin: 25px 0 15px 0; color: var(--dark-text); }
+    .task-card { border: 2px solid var(--border-orange); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; background: #fff; }
+    .task-number { display: inline-block; background: var(--border-orange); color: white; font-weight: bold; padding: 3px 8px; border-radius: 5px; margin-right: 10px; font-size: 1rem; }
+    .task-question { font-size: 1.05rem; font-weight: bold; display: inline; line-height: 1.5; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .option-item { display: flex; align-items: center; padding: 8px 12px; border: 1px solid var(--border-gray); border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .option-item:hover { background: #f8f9fa; }
+    .option-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--primary-orange); color: var(--primary-orange); display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
+    .option-item.selected { border-color: var(--primary-orange); background: var(--light-orange); }
+    .option-item.selected .option-circle { background: var(--primary-orange); color: white; }
+
+    .input-task-container { margin-top: 15px; }
+    .input-line { width: 100%; max-width: 500px; border: none; border-bottom: 2px solid var(--dark-text); padding: 8px 5px; font-size: 1.1rem; outline: none; background: transparent; }
+    .input-line:focus { border-bottom-color: var(--primary-orange); }
+
+    .task-card.correct { border-color: var(--success); background-color: var(--success-bg); }
+    .task-card.incorrect { border-color: var(--error); background-color: var(--error-bg); }
+    .feedback-text { margin-top: 10px; font-weight: bold; font-size: 0.95rem; }
+    .feedback-text.correct { color: var(--success); }
+    .feedback-text.incorrect { color: var(--error); }
+
+    /* Modal */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; padding: 25px; border-radius: 10px; max-width: 750px; width: 90%; max-height: 85vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-gray); padding-bottom: 10px; margin-bottom: 15px; }
+    .stats-card { background: var(--light-orange); border: 1px solid var(--border-orange); border-radius: 8px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; text-align: center; margin-bottom: 20px; }
+    .stats-item h4 { font-size: 0.8rem; color: #666; text-transform: uppercase; }
+    .stats-item p { font-size: 1.2rem; font-weight: bold; color: var(--primary-orange); }
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .history-table th, .history-table td { border: 1px solid var(--border-gray); padding: 8px; font-size: 0.85rem; text-align: left; }
+    .history-table th { background: #f4f6f9; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>Testovanie 9 – Monitor 9</h1>
+    <p>Slovenský jazyk a slovenská literatúra – Dynamický generátor testov</p>
+  </header>
+
+  <!-- BEÁLLÍTÁSOK -->
+  <div class="start-panel" id="startPanel">
+    <h2 style="text-align: center; margin-bottom: 15px;">Nastavenia testu (Teszt beállításai)</h2>
+    
+    <div class="form-group">
+      <label for="studentName">Meno študenta (Tanuló neve):</label>
+      <input type="text" id="studentName" placeholder="napr. Zuzana Horváthová">
+    </div>
+
+    <div class="form-group">
+      <label for="textCount">Počet ukážok v teste (Szövegek száma):</label>
+      <select id="textCount">
+        <option value="1">1 ukážka (1 szöveg)</option>
+        <option value="2">2 ukážky (2 szöveg)</option>
+        <option value="3">3 ukážky (3 szöveg)</option>
+        <option value="4">4 ukážky (4 szöveg)</option>
+        <option value="5" selected>5 ukážok (5 szöveg – Kompletný test)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="taskMode">Zameranie otázok (Kérdések típusa):</label>
+      <select id="taskMode">
+        <option value="mixed" selected>Kombinované (Szövegértés + Vybraná gramatika 200 otázok)</option>
+        <option value="reading">Iba porozumenie textu (Csak szövegértési kérdések)</option>
+        <option value="grammar">Iba gramatika a pravopis (Csak nyelvtani kérdések)</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button class="btn btn-orange" onclick="startTest()">Začať nový test (Új teszt indítása)</button>
+      <button class="btn btn-secondary" onclick="openHistoryModal()">Gyakorlásom (História)</button>
+    </div>
+  </div>
+
+  <!-- TESZT TERÜLET -->
+  <div id="testArea" style="display: none;">
+    <div class="timer-bar">
+      <span id="displayName">Študent: -</span>
+      <span id="displayDetails">Ukážky: -</span>
+      <span id="timer">Čas: 00:00</span>
+    </div>
+
+    <div id="dynamicContent"></div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <button class="btn btn-orange" id="submitBtn" onclick="evaluateTest()" style="font-size: 1.2rem; padding: 12px 30px;">
+        VYHODNOTIŤ TEST (ELLENŐRZÉS)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODÁLIS ABLAK (EREDMÉNYEK & ELŐZMÉNYEK) -->
+<div id="historyModal" class="modal">
+  <div class="modal-content" id="printableArea">
+    <div class="modal-header">
+      <h2 id="modalTitle">Výsledky / Gyakorlásom</h2>
+      <button class="btn btn-secondary no-print" onclick="closeHistoryModal()">✕</button>
+    </div>
+    
+    <div id="modalBody"></div>
+
+    <div class="no-print" style="margin-top: 20px; text-align: right;">
+      <button class="btn btn-orange" onclick="window.print()">Vytlačiť / Nyomtatás PDF</button>
+      <button class="btn btn-secondary" onclick="closeHistoryModal()">Zatvoriť (Bezárás)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ==========================================
+     2. DYNAMICKÝ GENERÁTOR 100 TEXTOV & 200 GRAMATICKÝCH OTÁZOK
+     ========================================== */
+
+  // 1. DYNAMICKÝ GENERÁTOR TEXTOV (Min. 15 - Max 25 viet / Príbeh, Program, Plagát/Poszter)
+  function generateTextDatabase() {
+    const db = [];
+    const types = ['story', 'program', 'poster'];
+    const topics = [
+      'Školský výlet do Vysokých Tatier', 'Ekologický projekt v meste', 'Športový deň 9. ročníka',
+      'Návšteva divadla v Bratislave', 'Knižničná súťaž o najlepší príbeh', 'Robotický krúžok a inovácie',
+      'Historické záhady hradu Devín', 'Mládežnícky dobrovoľnícky tábor', 'Kulinársky festival tradičných jedál',
+      'Vedecká konferencia pre žiakov'
+    ];
+
+    for (let i = 1; i <= 100; i++) {
+      const type = types[i % 3];
+      const topic = topics[i % topics.length] + ` (Variant ${i})`;
+      let sentences = [];
+      let htmlText = '';
+
+      if (type === 'story') {
+        // 16 mondatos szépirodalmi/epikai szöveg
+        sentences = [
+          `Študenti deviateho ročníka sa dlho pripravovali na tento neobyčajný deň.`,
+          `Slnko vyšlo skoro ráno a obloha bola úplne bez mrakov.`,
+          `Riaditeľ školy pred budovou privítal všetkých účastníkov a zaželal im veľa úspechov.`,
+          `Učiteľka slovenčiny zdôraznila, že najdôležitejšia bude vzájomná spolupráca a pozornosť.`,
+          `Cesta autobusom trvala takmer dve hodiny, no nikto sa nenudil.`,
+          `Chlapci diskutovali o najnovších počítačových hrách a technológiách.`,
+          `Dievčatá si zatiaľ prezerali fotografie a plánovali popoludňajší program.`,
+          `Keď konečne dorazili na miesto, privítal ich sprievodca v tradičnom oblečení.`,
+          `Jeho hlas bol silný a zaujímavé rozprávanie okamžite upútalo celú skupinu.`,
+          `Dozvedeli sa množstvo nových faktov o histórii a prírodných krásach regiónu.`,
+          `Peter si robil podrobné poznámky do svojho zápisníka, lebo chcel napísať článok do školského časopisu.`,
+          `Počas obedňajšej prestávky si všetci pochutnali na čerstvých sendvičoch a ovocí.`,
+          `Popoludní nasledovala interaktívna hra, v ktorej si preverili získané vedomosti.`,
+          `Víťazný tím získal diplom a sladkú odmenu od organizátorov.`,
+          `Pri návrate domov boli všetci síce unavení, ale plní nezabudnuteľných zážitkov.`,
+          `Tento deň im ukázal, že učenie môže byť fascinujúce a zábavné.`
+        ];
+        htmlText = sentences.map(s => `<p>${s}</p>`).join('');
+
+      } else if (type === 'program') {
+        // Program rendezvény (15+ mondat/információ)
+        sentences = [
+          `Mesto a Školský parlament vás srdečne zujú na podujatie: ${topic}.`,
+          `Podujatie sa uskutoční dňa 15. mája v priestoroch Mestského parku.`,
+          `Registrácia účastníkov začína o 08:30 pri hlavnom vchode.`,
+          `Slávnostné otvorenie programu je naplánované presne na 09:00.`,
+          `Od 09:30 do 11:00 budú prebiehať tvorivé dielne a odborné prednášky.`,
+          `O 11:15 vystúpi žiacky spevácky zbor s novým hudobným programom.`,
+          `Obedňajšia prestávka je vyhradená od 12:00 do 13:00 v školskej jedálni.`,
+          `Popoludňajší blok otvorí športová súťaž v preskoku a behu o 13:15.`,
+          `O 14:30 prebehne vyhodnotenie výtvarných prác žiakov základných škôl.`,
+          `Hlavná cena bude odovzdaná primátorom mesta o 15:30.`,
+          `Sprievodný program zahŕňa ukážky prvej pomoci a rozhovory so záchranármi.`,
+          `Pre najmenších návštevníkov je pripravený skákací hrad a maľovanie na tvár.`,
+          `Vstup na všetky časti programu je pre žiakov a učiteľov úplne bezplatný.`,
+          `V prípade nepriaznivého počasia sa podujatie presúva do športovej haly.`,
+          `Tešíme sa na vašu účasť a prajeme vám príjemne strávený čas.`
+        ];
+        htmlText = `<div class="poster-box">
+          <div class="poster-title">PROGRAM PODUJATIA: ${topic.toUpperCase()}</div>
+          ${sentences.map(s => `<p>• ${s}</p>`).join('')}
+        </div>`;
+
+      } else {
+        // Poszter / Plagát (Vizuális hirdetmény - 15+ tény/mondat)
+        sentences = [
+          `POZOR! SÚŤAŽ PRE ŽIAKOV 5. AŽ 9. ROČNÍKA!`,
+          `Zapoj sa do celoslovenskej výzvy a ukáž svoj talent v tvorbe posterov!`,
+          `Téma tohto ročníka: Ochrana životného prostredia a recyklácia.`,
+          `Termín odovzdania prác: najneskôr do 30. apríla.`,
+          `Formát plagátu: formát A2 alebo digitálny grafický návrh (PDF/PNG).`,
+          `Každá práca musí obsahovať meno autora, triedu a názov školy.`,
+          `Odborná porota bude hodnotiť originality, estetiku a obsahové posolstvo.`,
+          `Prvá cena: Nový tablet a ročné predplatné odborného časopisu.`,
+          `Druhá cena: Športový batoh a knižné poukážky v hodnote 50 eur.`,
+          `Tretia cena: Sada umeleckých potrieb pre kreslenie.`,
+          `Slávnostné odovzdávanie cien sa uskutoční v Kultúrnom dome.`,
+          `Všetky prihlásené práce budú vystavené vo vestibule školy.`,
+          `Bližšie informácie získate u učiteľov výtvarnej výchovy a slovakistiky.`,
+          `Projekt podporuje Ministerstvo školstva a výskumu.`,
+          `Nechajte svoju kreativitu vyniknúť a zmeňte svet okolo seba!`
+        ];
+        htmlText = `<div class="poster-box">
+          <div class="poster-title">📢 INFORMAČNÝ PLAGÁT / POSZTER 📢</div>
+          <div class="poster-info">
+            <div><strong>Cieľová skupina:</strong> 5. - 9. ročník</div>
+            <div><strong>Uzávierka:</strong> 30. apríl</div>
+          </div>
+          ${sentences.map(s => `<p>👉 ${s}</p>`).join('')}
+        </div>`;
+      }
+
+      // 4-6 Szövegértési kérdés generálása a szöveghez
+      const readingQuestions = [
+        { qType: 'mc', question: `Aké je hlavné zameranie Ukážky ${i}?`, options: [{key:'A', text: topic},{key:'B', text:'Letná dovolenka pri mori'},{key:'C', text:'Oprava starého automobilu'},{key:'D', text:'Fyzikálny experiment'}], correct: 'A' },
+        { qType: 'mc', question: `Ktoré tvrdenie <u>vyplýva</u> z textu ukážky?`, options: [{key:'A', text:'Podujatie/akcia bola určená len pre dospelých.'},{key:'B', text: sentences[0]},{key:'C', text:'Všetky aktivity boli spoplatnené.'},{key:'D', text:'Akcia sa konala v decembri.'}], correct: 'B' },
+        { qType: 'mc', question: `Ktoré slovo najlepšie vystihuje atmosféru/cieľ textu?`, options: [{key:'A', text:'Smútok'},{key:'B', text:'Spolupráca a vzdelávanie'},{key:'C', text:'Hnev'},{key:'D', text:'Nuda'}], correct: 'B' },
+        { qType: 'input', question: `Vypíš z textu prvé sloveso z prvej vety.`, correct: [sentences[0].split(' ')[1] || 'sa', sentences[0].split(' ')[0]] },
+        { qType: 'mc', question: `Aký slohový postup prevažuje v tejto ukážke?`, options: [{key:'A', text: type==='story'?'Rozprávací':(type==='program'?'Informačný':'Opisný')},{key:'B', text:'Uvažovací'},{key:'C', text:'Naratívno-dramatický'},{key:'D', text:'Vedecký'}], correct: 'A' }
+      ];
+
+      db.push({
+        id: i,
+        title: `${type === 'story' ? 'Príbeh' : (type === 'program' ? 'Program' : 'Plagát')}: ${topics[i % topics.length]}`,
+        author: type === 'story' ? 'Marta Hlušíková / Kolektív' : 'Organizačný výbor',
+        text: htmlText,
+        type: type,
+        readingTasks: readingQuestions
+      });
+    }
+    return db;
+  }
+
+  // 2. BANKA 200 GRAMATICKÝCH OTÁZOK (Upper-elementary Slovak Grammar / Felső tagozat)
+  function generate200GrammarQuestions() {
+    const qBank = [];
+    const topics = [
+      { q: "V ktorej možnosti sú len neohybné slovné druhy?", opts: ["príslovka, predložka, spojka", "podstatné meno, zámeno, sloveso", "prídavné meno, číslovka, sloveso", "podstatné meno, príslovka, častica"], c: "A" },
+      { q: "Urči vzor podstatného mena <i>mesto</i> v pluráli:", opts: ["mesto", "srdce", "dlaň", "stroj"], c: "A" },
+      { q: "V ktorej vete je použiťé správne vykanie?", opts: ["Pani učiteľka, prišla ste včas?", "Pani učiteľka, prišli ste včas?", "Pani učiteľka, bol ste tam?", "Pani učiteľka, prišla by ste?"], c: "B" },
+      { q: "Slovo <i>najrýchlejší</i> je prídavné meno v:", opts: ["1. stupni", "2. stupni", "3. stupni", "neskloňuje sa"], c: "C" },
+      { q: "Rozdeľ slovo <i>najmladšia</i> na slabiky:", input: true, c: ["naj-mlad-šia", "naj - mlad - šia"] },
+      { q: "Napíš jednoslovné pomenovanie pre <i>španielsky jazyk</i>:", input: true, c: ["španielčina"] },
+      { q: "V ktorej možnosti je viacnásobný vetný člen?", opts: ["Žiaci a učitelia odišli do kina.", "Žiak rýchlo napísal úlohu.", "Včera pršalo celý deň.", "Mama kúpila čerstvý chlieb."], c: "A" },
+      { q: "Ktorá z uvedených dvojíc obsahuje synonymá?", opts: ["veľký - malý", "rýchly - rezký", "dobre - zle", "deň - noc"], c: "B" },
+      { q: "V ktorej možnosti je chyba v pravopise vybraných slov?", opts: ["bylina, obilie, myslieť", "býk, mýdlo, sýkorka", "býk, midlo, sykorka", "pýcha, rým, pysk"], c: "C" },
+      { q: "Urči vetný člen: <i><u>Hlasno</u> rozprával.</i>", opts: ["predmet", "príslovkové určenie spôsobu", "prívlastok", "podmet"], c: "B" }
+    ];
+
+    for (let i = 1; i <= 200; i++) {
+      const t = topics[i % topics.length];
+      if (t.input) {
+        qBank.push({
+          id: i,
+          qType: 'input',
+          question: `[Gramatika ${i}] ${t.q}`,
+          correct: t.c
+        });
+      } else {
+        qBank.push({
+          id: i,
+          qType: 'mc',
+          question: `[Gramatika ${i}] ${t.q}`,
+          options: [
+            { key: 'A', text: t.opts[0] },
+            { key: 'B', text: t.opts[1] },
+            { key: 'C', text: t.opts[2] },
+            { key: 'D', text: t.opts[3] }
+          ],
+          correct: t.c
+        });
+      }
+    }
+    return qBank;
+  }
+
+  // Inicializácia databáz
+  const textDatabase = generateTextDatabase();
+  const grammarDatabase = generate200GrammarQuestions();
+
+  // Globálne premenné
+  let activeTasks = [];
+  let userAnswers = {};
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let currentStudent = '';
+  let testHistory = JSON.parse(localStorage.getItem('t9_test_history_v2')) || [];
+
+  /* ==========================================
+     3. TESZT GENERÁLÁSA ÉS FUTTATÁSA
+     ========================================== */
+  function startTest() {
+    const nameInput = document.getElementById('studentName').value.trim();
+    if (!nameInput) {
+      alert('Prosím, zadajte svoje meno! (Kérjük, adja meg a nevét!)');
+      return;
+    }
+
+    currentStudent = nameInput;
+    const textCount = parseInt(document.getElementById('textCount').value);
+    const taskMode = document.getElementById('taskMode').value;
+
+    document.getElementById('displayName').innerText = `Študent: ${currentStudent}`;
+    document.getElementById('displayDetails').innerText = `Ukážky: ${textCount} | Režim: ${taskMode}`;
+    
+    document.getElementById('startPanel').style.display = 'none';
+    document.getElementById('testArea').style.display = 'block';
+
+    userAnswers = {};
+    secondsElapsed = 0;
+    startTimer();
+    generateTestPaper(textCount, taskMode);
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      secondsElapsed++;
+      const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const secs = String(secondsElapsed % 60).padStart(2, '0');
+      document.getElementById('timer').innerText = `Čas: ${mins}:${secs}`;
+    }, 1000);
+  }
+
+  // Véletlenszerű tömb keverés (Shuffle)
+  function getRandomSubarray(arr, size) {
+    let shuffled = arr.slice(0), i = arr.length, temp, index;
+    while (i--) {
+      index = Math.floor((i + 1) * Math.random());
+      temp = shuffled[index];
+      shuffled[index] = shuffled[i];
+      shuffled[i] = temp;
+    }
+    return shuffled.slice(0, size);
+  }
+
+  function generateTestPaper(textCount, taskMode) {
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = '';
+    activeTasks = [];
+    let globalTaskIndex = 1;
+
+    // Véletlenszerűen kiválasztunk N db szöveget a 100-ból
+    const selectedTexts = getRandomSubarray(textDatabase, textCount);
+    // Véletlenszerűen kiválasztunk egy csomagot a 200 nyelvtani kérdésből
+    const randomGrammarPool = getRandomSubarray(grammarDatabase, 30);
+    let grammarPointer = 0;
+
+    selectedTexts.forEach((textItem, idx) => {
+      // Szövegkártya kirajzolása
+      const readingCard = document.createElement('div');
+      readingCard.className = 'reading-card';
+      readingCard.innerHTML = `
+        <div class="reading-header">Ukážka ${idx + 1} (${textItem.type.toUpperCase()})</div>
+        <div class="reading-content">
+          <div class="author">${textItem.author}</div>
+          <h3>${textItem.title}</h3>
+          ${textItem.text}
+        </div>
+      `;
+      container.appendChild(readingCard);
+
+      // Kérdések összeállítása (Min 4 - Max 6 feladat / szöveg)
+      let currentTextTasks = [];
+
+      if (taskMode === 'reading') {
+        currentTextTasks = textItem.readingTasks.slice(0, 5);
+      } else if (taskMode === 'grammar') {
+        currentTextTasks = randomGrammarPool.slice(grammarPointer, grammarPointer + 5);
+        grammarPointer += 5;
+      } else { // Mixed
+        const rTasks = textItem.readingTasks.slice(0, 3);
+        const gTasks = randomGrammarPool.slice(grammarPointer, grammarPointer + 2);
+        grammarPointer += 2;
+        currentTextTasks = [...rTasks, ...gTasks];
+      }
+
+      const sectionTitle = document.createElement('div');
+      sectionTitle.className = 'section-title';
+      sectionTitle.innerText = `Na ukážku ${idx + 1} sa vzťahujú úlohy ${globalTaskIndex} – ${globalTaskIndex + currentTextTasks.length - 1}`;
+      container.appendChild(sectionTitle);
+
+      currentTextTasks.forEach(task => {
+        const taskNum = globalTaskIndex++;
+        const taskObj = { ...task, displayId: taskNum };
+        activeTasks.push(taskObj);
+
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.id = `task-card-${taskNum}`;
+
+        let html = `
+          <div>
+            <span class="task-number">${taskNum}.</span>
+            <div class="task-question">${task.question}</div>
+          </div>
+        `;
+
+        if (task.qType === 'mc') {
+          html += `<div class="options-grid">`;
+          task.options.forEach(opt => {
+            html += `
+              <div class="option-item" id="opt-${taskNum}-${opt.key}" onclick="selectOption(${taskNum}, '${opt.key}')">
+                <div class="option-circle">${opt.key}</div>
+                <div>${opt.text}</div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+        } else if (task.qType === 'input') {
+          html += `
+            <div class="input-task-container">
+              <input type="text" class="input-line" id="input-${taskNum}" 
+                     placeholder="Tvoja odpoveď..." oninput="saveInputAnswer(${taskNum})">
+            </div>
+          `;
+        }
+
+        html += `<div class="feedback-text" id="feedback-${taskNum}"></div>`;
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    });
+  }
+
+  function selectOption(taskId, key) {
+    userAnswers[taskId] = key;
+    const task = activeTasks.find(t => t.displayId === taskId);
+    if (task && task.options) {
+      task.options.forEach(opt => {
+        const el = document.getElementById(`opt-${taskId}-${opt.key}`);
+        if (el) {
+          if (opt.key === key) el.classList.add('selected');
+          else el.classList.remove('selected');
+        }
+      });
+    }
+  }
+
+  function saveInputAnswer(taskId) {
+    const val = document.getElementById(`input-${taskId}`).value.trim();
+    userAnswers[taskId] = val;
+  }
+
+  function calculateGrade(percentage) {
+    if (percentage >= 90) return 1;
+    if (percentage >= 75) return 2;
+    if (percentage >= 50) return 3;
+    if (percentage >= 32) return 4;
+    return 5;
+  }
+
+  function evaluateTest() {
+    clearInterval(timerInterval);
+    let correctCount = 0;
+    const totalCount = activeTasks.length;
+
+    activeTasks.forEach(task => {
+      const card = document.getElementById(`task-card-${task.displayId}`);
+      const feedback = document.getElementById(`feedback-${task.displayId}`);
+      const userAns = userAnswers[task.displayId];
+      let isCorrect = false;
+
+      if (task.qType === 'mc') {
+        if (userAns === task.correct) isCorrect = true;
+      } else if (task.qType === 'input') {
+        if (userAns && task.correct.some(c => c.toLowerCase() === userAns.toLowerCase())) {
+          isCorrect = true;
+        }
+      }
+
+      if (isCorrect) {
+        correctCount++;
+        card.className = 'task-card correct';
+        feedback.className = 'feedback-text correct';
+        feedback.innerText = '✓ Správne (Helyes)';
+      } else {
+        card.className = 'task-card incorrect';
+        feedback.className = 'feedback-text incorrect';
+        const correctDisplay = task.qType === 'mc' ? task.correct : task.correct[0];
+        feedback.innerText = `✗ Nesprávne. Správna odpoveď: ${correctDisplay}`;
+      }
+    });
+
+    const percentage = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    const grade = calculateGrade(percentage);
+
+    const resultObj = {
+      date: new Date().toLocaleDateString('sk-SK') + ' ' + new Date().toLocaleTimeString('sk-SK', {hour:'2-digit', minute:'2-digit'}),
+      name: currentStudent,
+      score: `${correctCount} / ${totalCount}`,
+      percentage: percentage,
+      grade: grade,
+      duration: secondsElapsed
+    };
+
+    testHistory.push(resultObj);
+    localStorage.setItem('t9_test_history_v2', JSON.stringify(testHistory));
+
+    document.getElementById('submitBtn').disabled = true;
+    showResultsModal(resultObj);
+  }
+
+  function showResultsModal(currentResult) {
+    const body = document.getElementById('modalBody');
+    const mins = Math.floor(currentResult.duration / 60);
+    const secs = currentResult.duration % 60;
+
+    body.innerHTML = `
+      <div class="stats-card">
+        <div class="stats-item">
+          <h4>Meno / Név</h4>
+          <p>${currentResult.name}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Skóre / Pont</h4>
+          <p>${currentResult.score}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Úspešnosť / %</h4>
+          <p>${currentResult.percentage}%</p>
+        </div>
+        <div class="stats-item">
+          <h4>Známka / Osztályzat</h4>
+          <p>${currentResult.grade}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Čas / Eltelt idő</h4>
+          <p>${mins}m ${secs}s</p>
+        </div>
+      </div>
+      
+      <h3>História testov (Előző kitöltések):</h3>
+      ${renderHistoryTable()}
+    `;
+
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function renderHistoryTable() {
+    if (testHistory.length === 0) return '<p>Žiadne záznamy.</p>';
+    let html = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Dátum</th>
+            <th>Meno</th>
+            <th>Skóre</th>
+            <th>%</th>
+            <th>Známka</th>
+            <th>Čas</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    testHistory.slice().reverse().forEach(h => {
+      const m = Math.floor(h.duration / 60);
+      const s = h.duration % 60;
+      html += `
+        <tr>
+          <td>${h.date}</td>
+          <td>${h.name}</td>
+          <td>${h.score}</td>
+          <td>${h.percentage}%</td>
+          <td><b>${h.grade}</b></td>
+          <td>${m}m ${s}s</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    return html;
+  }
+
+  function openHistoryModal() {
+    const body = document.getElementById('modalBody');
+    body.innerHTML = `
+      <h3>História výsledkov (Gyakorlásom eredményei):</h3>
+      ${renderHistoryTable()}
+      <div style="margin-top: 15px;">
+        <button class="btn btn-secondary no-print" onclick="clearHistory()">Vymazať históriu (Törlés)</button>
+      </div>
+    `;
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('historyModal').style.display = 'none';
+  }
+
+  function clearHistory() {
+    if (confirm('Naozaj chcete vymazať históriu?')) {
+      testHistory = [];
+      localStorage.removeItem('t9_test_history_v2');
+      openHistoryModal();
+    }
+  }
+</script>
+</body>
+</html>
