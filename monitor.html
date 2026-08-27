@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testovanie 9 – Slovenský jazyk a slovenská literatúra</title>
+  <style>
+    /* ==========================================
+       1. STÍLUSOK ÉS VIZUÁLIS ELRENDEZÉS
+       ========================================== */
+    :root {
+      --primary-orange: #f58220;
+      --light-orange: #fff8f2;
+      --border-orange: #fca34d;
+      --dark-text: #2c3e50;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --error: #c62828;
+      --error-bg: #ffebee;
+      --border-gray: #dcdfe6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--dark-text);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-container {
+      max-width: 900px;
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 25px;
+    }
+
+    /* Fejléc */
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+      border-bottom: 3px solid var(--primary-orange);
+      padding-bottom: 15px;
+    }
+
+    header h1 {
+      color: var(--primary-orange);
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    header p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    /* Start / Beállítások panel */
+    .start-panel {
+      background: var(--light-orange);
+      border: 2px solid var(--border-orange);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border-gray);
+      border-radius: 6px;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-orange { background: var(--primary-orange); color: white; }
+    .btn-orange:hover { background: #e06d0b; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-secondary:hover { background: #5a6268; }
+
+    /* Stopper és fejléc infók */
+    .timer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #eee;
+      padding: 10px 20px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    /* Olvasmány kártya (Ukážka 2) */
+    .reading-card {
+      border: 2px solid var(--border-orange);
+      border-radius: 10px;
+      background: var(--light-orange);
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .reading-header {
+      background: var(--border-orange);
+      color: white;
+      padding: 10px 15px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    .reading-content {
+      padding: 20px;
+      line-height: 1.6;
+      font-size: 0.98rem;
+    }
+
+    .reading-content h3 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .reading-content .author {
+      text-align: center;
+      font-style: italic;
+      margin-bottom: 5px;
+    }
+
+    /* Feladat kártyák elrendezése */
+    .section-title {
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin: 25px 0 15px 0;
+      color: var(--dark-text);
+    }
+
+    .task-card {
+      border: 2px solid var(--border-orange);
+      border-radius: 10px;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      background: #fff;
+      position: relative;
+    }
+
+    .task-number {
+      display: inline-block;
+      background: var(--border-orange);
+      color: white;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 5px;
+      margin-right: 10px;
+      font-size: 1rem;
+    }
+
+    .task-question {
+      font-size: 1.05rem;
+      font-weight: bold;
+      display: inline;
+      line-height: 1.5;
+    }
+
+    /* Feleletválasztós opciók */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      border: 1px solid var(--border-gray);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .option-item:hover {
+      background: #f8f9fa;
+    }
+
+    .option-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--primary-orange);
+      color: var(--primary-orange);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .option-item.selected {
+      border-color: var(--primary-orange);
+      background: var(--light-orange);
+    }
+
+    .option-item.selected .option-circle {
+      background: var(--primary-orange);
+      color: white;
+    }
+
+    /* Beíró mezők */
+    .input-task-container {
+      margin-top: 15px;
+    }
+
+    .input-line {
+      width: 100%;
+      max-width: 500px;
+      border: none;
+      border-bottom: 2px solid var(--dark-text);
+      padding: 8px 5px;
+      font-size: 1.1rem;
+      outline: none;
+      background: transparent;
+    }
+
+    .input-line:focus {
+      border-bottom-color: var(--primary-orange);
+    }
+
+    /* Visszajelző stílusok ellenőrzés után */
+    .task-card.correct {
+      border-color: var(--success);
+      background-color: var(--success-bg);
+    }
+
+    .task-card.incorrect {
+      border-color: var(--error);
+      background-color: var(--error-bg);
+    }
+
+    .feedback-text {
+      margin-top: 10px;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+
+    .feedback-text.correct { color: var(--success); }
+    .feedback-text.incorrect { color: var(--error); }
+
+    /* Modális ablak (Statisztika) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      max-width: 700px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border-gray);
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    .stats-card {
+      background: var(--light-orange);
+      border: 1px solid var(--border-orange);
+      border-radius: 8px;
+      padding: 15px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .stats-item h4 {
+      font-size: 0.8rem;
+      color: #666;
+      text-transform: uppercase;
+    }
+
+    .stats-item p {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--primary-orange);
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .history-table th, .history-table td {
+      border: 1px solid var(--border-gray);
+      padding: 8px;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    .history-table th { background: #f4f6f9; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>Testovanie 9 – Monitor 9</h1>
+    <p>Slovenský jazyk a slovenská literatúra – Interaktívny test</p>
+  </header>
+
+  <!-- BEÁLLÍTÁSOK / INDÍTÁS -->
+  <div class="start-panel" id="startPanel">
+    <h2>Vítejte na prípravnom teste</h2>
+    <p style="margin-bottom: 15px;">Zadajte svoje meno a začnite test.</p>
+    <div class="form-group">
+      <label for="studentName">Meno študenta (Tanuló neve):</label>
+      <input type="text" id="studentName" placeholder="napr. Peter Kovács">
+    </div>
+    <button class="btn btn-orange" onclick="startTest()">Začať test (Teszt indítása)</button>
+    <button class="btn btn-secondary" onclick="openHistoryModal()">Gyakorlásom (História)</button>
+  </div>
+
+  <!-- TESZT TERÜLET -->
+  <div id="testArea" style="display: none;">
+    <div class="timer-bar">
+      <span id="displayName">Študent: -</span>
+      <span id="timer">Čas: 00:00</span>
+    </div>
+
+    <!-- UKÁŽKA 2 -->
+    <div class="reading-card">
+      <div class="reading-header">Ukážka 2</div>
+      <div class="reading-content">
+        <div class="author">Marta Hlušíková</div>
+        <h3>Strýko Viktor a jeho počítač</h3>
+        <p>Strýko Viktor je programátor. Svojimi počítačovými programami uľahčuje prácu vedcom, inžinierom a dokonca i lekárom.</p>
+        <p>Elenkin starší brat Maťo dostal zlú známku z diktátu. So svojím žiaľom sa rozhodol podeliť sa so strýkom Viktorom.</p>
+        <p>„Vitaj, Maťko! Čo dobrého mi nesieš?“ potešil sa strýko.</p>
+        <p>„Zlú známku z diktátu.“</p>
+        <p>„Ako je to možné? Ja som diktáty písal vždy na jednotky!“ chytal sa strýko Viktor za hlavu. „Preto som tu. Či by si ma tie vybrané slová nenaučil na počítači...“</p>
+        <p>„No... Mohol by som ti zostaviť taký program. Vieš, že to nie je zlý nápad?“ Stisol kláves, potom ešte raz a povedal: „Teraz mi hovor zaradom vybrané slová po b.“</p>
+        <p>„Ale... ja... to by mal vedieť počítač!“ povedal Maťo.</p>
+        <p>„Bude vedieť, keď mu dáme informácie,“ spresnil strýko, „ináč nemôžem zostaviť program.“</p>
+        <p>„Takže on nevie všetko?“ neveriacky sa díval na obrazovku Maťo.</p>
+        <p>„Nie.“</p>
+        <p>„To je teda dobré! Veď kým mu nadiktujem vybrané slová, sám sa ich naučím,“ hneval sa Maťo na počítač.</p>
+        <p>„Skús to,“ povedal strýko Viktor. „Nauč sa dnes všetky po b. Potom ti dovolím zahrať sa na počítači moju najnovšiu hru.“</p>
+        <p>Maťo si sadol a o chvíľu vedel všetky slová od byliny až po dobytok. Strýko ho aj skúšal, ale nachytať ho nemohol. Veď čože je to pár vybraných slov oproti počítačovej hre?</p>
+      </div>
+    </div>
+
+    <!-- FELADATOK (Ukážka 2) -->
+    <div class="section-title">Na ukážku 2 sa vzťahujú úlohy 18 – 24</div>
+    <div id="tasksContainer1"></div>
+
+    <!-- FELADATOK (Úlohy 25 - 30) -->
+    <div class="section-title">Úlohy 25 – 30</div>
+    <div id="tasksContainer2"></div>
+
+    <!-- ELLENŐRZÉS GOMB -->
+    <div style="text-align: center; margin: 30px 0;">
+      <button class="btn btn-orange" id="submitBtn" onclick="evaluateTest()" style="font-size: 1.2rem; padding: 12px 30px;">
+        VYHODNOTIŤ TEST (ELLENŐRZÉS)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODÁLIS ABLAK A STATISZTIKÁHOZ ÉS ELŐZMÉNYEKHEZ -->
+<div id="historyModal" class="modal">
+  <div class="modal-content" id="printableArea">
+    <div class="modal-header">
+      <h2 id="modalTitle">Výsledky / Gyakorlásom</h2>
+      <button class="btn btn-secondary no-print" onclick="closeHistoryModal()">✕</button>
+    </div>
+    
+    <div id="modalBody"></div>
+
+    <div class="no-print" style="margin-top: 20px; text-align: right;">
+      <button class="btn btn-orange" onclick="window.print()">Vytlačiť / Nyomtatás PDF</button>
+      <button class="btn btn-secondary" onclick="closeHistoryModal()">Zatvoriť (Bezárás)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ==========================================
+     2. JAVASCRIPT ADATOK ÉS LOGIKA
+     ========================================== */
+
+  // A képek alapján rögzített tesztfeladatok adatstruktúrája
+  const tasksData = [
+    // Úlohy 18 - 24 (Ukážka 2)
+    {
+      id: 18,
+      section: 1,
+      type: 'mc',
+      question: 'Z ukážky vyplýva, že Maťo',
+      options: [
+        { key: 'A', text: 'poprosil strýka, aby mu pomohol so slovenčinou.' },
+        { key: 'B', text: 'má strýka, ktorý je digitálne nezručný.' },
+        { key: 'C', text: 'sa chce naučiť programovať.' },
+        { key: 'D', text: 'píše veľmi dobre diktáty.' }
+      ],
+      correct: 'A'
+    },
+    {
+      id: 19,
+      section: 1,
+      type: 'mc',
+      question: 'Ktoré povolanie <u>sa nespomína</u> v ukážke?',
+      options: [
+        { key: 'A', text: 'lekár' },
+        { key: 'B', text: 'inžinier' },
+        { key: 'C', text: 'učiteľ' },
+        { key: 'D', text: 'vedec' }
+      ],
+      correct: 'C'
+    },
+    {
+      id: 20,
+      section: 1,
+      type: 'mc',
+      question: 'Slovné spojenie <i>chytať sa za hlavu</i> podľa ukážky znamená',
+      options: [
+        { key: 'A', text: 'byť zaskočený, prekvapený.' },
+        { key: 'B', text: 'pocítiť radosť z niečoho.' },
+        { key: 'C', text: 'konať bez rozmýšľania.' },
+        { key: 'D', text: 'dostať dobrý nápad.' }
+      ],
+      correct: 'A'
+    },
+    {
+      id: 21,
+      section: 1,
+      type: 'mc',
+      question: 'V ktorej možnosti sú len neohybné slovné druhy?',
+      options: [
+        { key: 'A', text: 'potom, moju, teraz' },
+        { key: 'B', text: 'svojím, vždy, takže' },
+        { key: 'C', text: 'nemôžem, ich, všetky' },
+        { key: 'D', text: 'preto, dokonca, oproti' }
+      ],
+      correct: 'D'
+    },
+    {
+      id: 22,
+      section: 1,
+      type: 'mc',
+      question: 'Ktorý slovný druh <u>sa nenachádza</u> v názve ukážky?',
+      options: [
+        { key: 'A', text: 'podstatné meno' },
+        { key: 'B', text: 'prídavné meno' },
+        { key: 'C', text: 'zámeno' },
+        { key: 'D', text: 'spojka' }
+      ],
+      correct: 'D'
+    },
+    {
+      id: 23,
+      section: 1,
+      type: 'input',
+      question: 'Vypíš z ukážky prvú zvolaciu vetu.',
+      correct: ['Vitaj, Maťko!', 'Vitaj, Maťko']
+    },
+    {
+      id: 24,
+      section: 1,
+      type: 'input',
+      question: 'Vypíš z ukážky vybrané slovo, ktoré označuje rodinného príslušníka.',
+      correct: ['strýko', 'strýko.']
+    },
+    // Úlohy 25 - 30
+    {
+      id: 25,
+      section: 2,
+      type: 'mc',
+      question: 'V ktorej vete sa nachádza viacnásobný vetný člen?',
+      options: [
+        { key: 'A', text: 'Deviataci chodili na doučovanie z matematiky.' },
+        { key: 'B', text: 'Peťo vyliezol s ďalekohľadom na marhuľu.' },
+        { key: 'C', text: 'Na území Slovenska žijú medvede a kamzíky.' },
+        { key: 'D', text: 'Dnes sme písali kontrolnú prácu z biológie.' }
+      ],
+      correct: 'C'
+    },
+    {
+      id: 26,
+      section: 2,
+      type: 'mc',
+      question: 'V ktorej možnosti sú všetky slová napísané pravopisne správne?',
+      options: [
+        { key: 'A', text: 'rýchly, cibula, mišlienka' },
+        { key: 'B', text: 'nábytok, obilie, vysoký' },
+        { key: 'C', text: 'bolavý, pýcha, korito' },
+        { key: 'D', text: 'mydlo, ľudový, sýkorka' }
+      ],
+      correct: 'B'
+    },
+    {
+      id: 27,
+      section: 2,
+      type: 'input',
+      question: 'Rozdeľ správne slovo <i>najmladšia</i> na slabiky.',
+      correct: ['naj-mlad-šia', 'naj - mlad - šia']
+    },
+    {
+      id: 28,
+      section: 2,
+      type: 'input',
+      question: 'Napíš pravopisne a gramaticky správne slovné spojenie <i>španielsky jazyk</i> ako jednoslovné pomenovanie.',
+      correct: ['španielčina', 'španielčina.']
+    },
+    {
+      id: 29,
+      section: 2,
+      type: 'mc',
+      question: 'Ako sa nazýva krátky epický útvar, ktorého cieľom je podať mravné ponaučenie a v ktorom vystupujú väčšinou zvieratá?',
+      options: [
+        { key: 'A', text: 'rozprávka' },
+        { key: 'B', text: 'bájka' },
+        { key: 'C', text: 'povesť' },
+        { key: 'D', text: 'povedka' }
+      ],
+      correct: 'B'
+    },
+    {
+      id: 30,
+      section: 2,
+      type: 'mc',
+      question: 'V ktorej možnosti je použité správne vykanie?',
+      options: [
+        { key: 'A', text: 'Bol by ste ochotný odviezť ma?' },
+        { key: 'B', text: 'Povedala ste to susede?' },
+        { key: 'C', text: 'Mohli by ste mi podať pohár?' },
+        { key: 'D', text: 'Robil ste to úplne sám?' }
+      ],
+      correct: 'C'
+    }
+  ];
+
+  // Globális állapotok
+  let userAnswers = {};
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let currentStudent = '';
+  let testHistory = JSON.parse(localStorage.getItem('t9_test_history')) || [];
+
+  // Teszt indítása
+  function startTest() {
+    const nameInput = document.getElementById('studentName').value.trim();
+    if (!nameInput) {
+      alert('Prosím, zadajte svoje meno! (Kérjük, adja meg a nevét!)');
+      return;
+    }
+
+    currentStudent = nameInput;
+    document.getElementById('displayName').innerText = `Študent: ${currentStudent}`;
+    document.getElementById('startPanel').style.display = 'none';
+    document.getElementById('testArea').style.display = 'block';
+
+    userAnswers = {};
+    secondsElapsed = 0;
+    startTimer();
+    renderTasks();
+  }
+
+  // Stopper indítása
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      secondsElapsed++;
+      const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const secs = String(secondsElapsed % 60).padStart(2, '0');
+      document.getElementById('timer').innerText = `Čas: ${mins}:${secs}`;
+    }, 1000);
+  }
+
+  // Feladatok renderelése
+  function renderTasks() {
+    const c1 = document.getElementById('tasksContainer1');
+    const c2 = document.getElementById('tasksContainer2');
+    c1.innerHTML = '';
+    c2.innerHTML = '';
+
+    tasksData.forEach(task => {
+      const card = document.createElement('div');
+      card.className = 'task-card';
+      card.id = `task-card-${task.id}`;
+
+      let html = `
+        <div>
+          <span class="task-number">${task.id}.</span>
+          <div class="task-question">${task.question}</div>
+        </div>
+      `;
+
+      if (task.type === 'mc') {
+        html += `<div class="options-grid">`;
+        task.options.forEach(opt => {
+          html += `
+            <div class="option-item" id="opt-${task.id}-${opt.key}" onclick="selectOption(${task.id}, '${opt.key}')">
+              <div class="option-circle">${opt.key}</div>
+              <div>${opt.text}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      } else if (task.type === 'input') {
+        html += `
+          <div class="input-task-container">
+            <input type="text" class="input-line" id="input-${task.id}" 
+                   placeholder="Tvoja odpoveď..." oninput="saveInputAnswer(${task.id})">
+          </div>
+        `;
+      }
+
+      html += `<div class="feedback-text" id="feedback-${task.id}"></div>`;
+
+      card.innerHTML = html;
+
+      if (task.section === 1) c1.appendChild(card);
+      else c2.appendChild(card);
+    });
+  }
+
+  // Opció kiválasztása feleletválasztósnál
+  function selectOption(taskId, key) {
+    userAnswers[taskId] = key;
+    const task = tasksData.find(t => t.id === taskId);
+    task.options.forEach(opt => {
+      const el = document.getElementById(`opt-${taskId}-${opt.key}`);
+      if (opt.key === key) el.classList.add('selected');
+      else el.classList.remove('selected');
+    });
+  }
+
+  // Beíró mező válaszának mentése
+  function saveInputAnswer(taskId) {
+    const val = document.getElementById(`input-${taskId}`).value.trim();
+    userAnswers[taskId] = val;
+  }
+
+  // Osztályzat meghatározása
+  function calculateGrade(percentage) {
+    if (percentage >= 90) return 1;
+    if (percentage >= 75) return 2;
+    if (percentage >= 50) return 3;
+    if (percentage >= 32) return 4;
+    return 5;
+  }
+
+  // Teszt kiértékelése
+  function evaluateTest() {
+    clearInterval(timerInterval);
+    let correctCount = 0;
+    const totalCount = tasksData.length;
+
+    tasksData.forEach(task => {
+      const card = document.getElementById(`task-card-${task.id}`);
+      const feedback = document.getElementById(`feedback-${task.id}`);
+      const userAns = userAnswers[task.id];
+      let isCorrect = false;
+
+      if (task.type === 'mc') {
+        if (userAns === task.correct) isCorrect = true;
+      } else if (task.type === 'input') {
+        if (userAns && task.correct.some(c => c.toLowerCase() === userAns.toLowerCase())) {
+          isCorrect = true;
+        }
+      }
+
+      if (isCorrect) {
+        correctCount++;
+        card.className = 'task-card correct';
+        feedback.className = 'feedback-text correct';
+        feedback.innerText = '✓ Správne (Helyes)';
+      } else {
+        card.className = 'task-card incorrect';
+        feedback.className = 'feedback-text incorrect';
+        const correctDisplay = task.type === 'mc' ? task.correct : task.correct[0];
+        feedback.innerText = `✗ Nesprávne. Správna odpoveď: ${correctDisplay}`;
+      }
+    });
+
+    const percentage = Math.round((correctCount / totalCount) * 100);
+    const grade = calculateGrade(percentage);
+
+    // Eredmény mentése
+    const resultObj = {
+      date: new Date().toLocaleDateString('sk-SK') + ' ' + new Date().toLocaleTimeString('sk-SK', {hour:'2-digit', minute:'2-digit'}),
+      name: currentStudent,
+      score: `${correctCount} / ${totalCount}`,
+      percentage: percentage,
+      grade: grade,
+      duration: secondsElapsed
+    };
+
+    testHistory.push(resultObj);
+    localStorage.setItem('t9_test_history', JSON.stringify(testHistory));
+
+    // Gomb letiltása és modális megnyitása
+    document.getElementById('submitBtn').disabled = true;
+    showResultsModal(resultObj);
+  }
+
+  // Eredmények megjelenítése Modális ablakban
+  function showResultsModal(currentResult) {
+    const body = document.getElementById('modalBody');
+    const mins = Math.floor(currentResult.duration / 60);
+    const secs = currentResult.duration % 60;
+
+    body.innerHTML = `
+      <div class="stats-card">
+        <div class="stats-item">
+          <h4>Meno / Név</h4>
+          <p>${currentResult.name}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Skóre / Pont</h4>
+          <p>${currentResult.score}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Úspešnosť / %</h4>
+          <p>${currentResult.percentage}%</p>
+        </div>
+        <div class="stats-item">
+          <h4>Známka / Osztályzat</h4>
+          <p>${currentResult.grade}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Čas / Eltelt idő</h4>
+          <p>${mins}m ${secs}s</p>
+        </div>
+      </div>
+      
+      <h3>História testov (Előző kitöltések):</h3>
+      ${renderHistoryTable()}
+    `;
+
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function renderHistoryTable() {
+    if (testHistory.length === 0) return '<p>Žiadne záznamy.</p>';
+    let html = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Dátum</th>
+            <th>Meno</th>
+            <th>Skóre</th>
+            <th>%</th>
+            <th>Známka</th>
+            <th>Čas</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    testHistory.slice().reverse().forEach(h => {
+      const m = Math.floor(h.duration / 60);
+      const s = h.duration % 60;
+      html += `
+        <tr>
+          <td>${h.date}</td>
+          <td>${h.name}</td>
+          <td>${h.score}</td>
+          <td>${h.percentage}%</td>
+          <td><b>${h.grade}</b></td>
+          <td>${m}m ${s}s</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    return html;
+  }
+
+  function openHistoryModal() {
+    const body = document.getElementById('modalBody');
+    body.innerHTML = `
+      <h3>História výsledkov (Gyakorlásom eredményei):</h3>
+      ${renderHistoryTable()}
+      <div style="margin-top: 15px;">
+        <button class="btn btn-secondary no-print" onclick="clearHistory()">Vymazať históriu (Törlés)</button>
+      </div>
+    `;
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('historyModal').style.display = 'none';
+  }
+
+  function clearHistory() {
+    if (confirm('Naozaj chcete vymazať históriu?')) {
+      testHistory = [];
+      localStorage.removeItem('t9_test_history');
+      openHistoryModal();
+    }
+  }
+</script>
+</body>
+</html>
