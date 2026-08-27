@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testovanie 9 – Slovenský jazyk a slovenská literatúra</title>
+  <style>
+    :root {
+      --primary-orange: #f58220;
+      --light-orange: #fff8f2;
+      --border-orange: #fca34d;
+      --dark-text: #2c3e50;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --error: #c62828;
+      --error-bg: #ffebee;
+      --border-gray: #dcdfe6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--dark-text); padding: 20px; display: flex; justify-content: center; }
+    .app-container { max-width: 950px; width: 100%; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 25px; }
+
+    header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--primary-orange); padding-bottom: 15px; }
+    header h1 { color: var(--primary-orange); font-size: 1.8rem; margin-bottom: 5px; }
+    header p { color: #666; font-size: 0.95rem; }
+
+    .start-panel { background: var(--light-orange); border: 2px solid var(--border-orange); border-radius: 10px; padding: 20px; margin-bottom: 25px; }
+    .form-group { margin-bottom: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-gray); border-radius: 6px; font-size: 1rem; background: #fff; }
+    .button-group { display: flex; gap: 10px; justify-content: center; margin-top: 20px; }
+
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s ease; }
+    .btn-orange { background: var(--primary-orange); color: white; }
+    .btn-orange:hover { background: #e06d0b; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-secondary:hover { background: #5a6268; }
+
+    .timer-bar { display: flex; justify-content: space-between; align-items: center; background: #eee; padding: 10px 20px; border-radius: 6px; margin-bottom: 20px; font-weight: bold; }
+
+    .reading-card { border: 2px solid var(--border-orange); border-radius: 10px; background: var(--light-orange); margin-bottom: 30px; overflow: hidden; }
+    .reading-header { background: var(--border-orange); color: white; padding: 10px 15px; font-weight: bold; font-size: 1.1rem; }
+    .reading-content { padding: 20px; line-height: 1.6; font-size: 0.98rem; }
+    .reading-content h3 { text-align: center; margin-bottom: 10px; color: var(--primary-orange); }
+    .reading-content .author { text-align: center; font-style: italic; margin-bottom: 15px; }
+
+    .poster-box { border: 2px dashed var(--primary-orange); background: #fff; padding: 15px; border-radius: 8px; margin: 15px 0; }
+    .poster-title { font-weight: bold; font-size: 1.3rem; text-align: center; color: var(--primary-orange); margin-bottom: 10px; }
+    .poster-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #fdf3e7; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+
+    .section-title { text-align: center; font-size: 1.2rem; font-weight: bold; margin: 25px 0 15px 0; color: var(--dark-text); border-bottom: 2px dotted #ccc; padding-bottom: 5px; }
+    .task-card { border: 2px solid var(--border-orange); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; background: #fff; }
+    .task-number { display: inline-block; background: var(--border-orange); color: white; font-weight: bold; padding: 3px 8px; border-radius: 5px; margin-right: 10px; font-size: 1rem; }
+    .task-question { font-size: 1.05rem; font-weight: bold; display: inline; line-height: 1.5; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .option-item { display: flex; align-items: center; padding: 8px 12px; border: 1px solid var(--border-gray); border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .option-item:hover { background: #f8f9fa; }
+    .option-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--primary-orange); color: var(--primary-orange); display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
+    .option-item.selected { border-color: var(--primary-orange); background: var(--light-orange); }
+    .option-item.selected .option-circle { background: var(--primary-orange); color: white; }
+
+    .input-task-container { margin-top: 15px; }
+    .input-line { width: 100%; max-width: 500px; border: none; border-bottom: 2px solid var(--dark-text); padding: 8px 5px; font-size: 1.1rem; outline: none; background: transparent; }
+    .input-line:focus { border-bottom-color: var(--primary-orange); }
+
+    .task-card.correct { border-color: var(--success); background-color: var(--success-bg); }
+    .task-card.incorrect { border-color: var(--error); background-color: var(--error-bg); }
+    .feedback-text { margin-top: 10px; font-weight: bold; font-size: 0.95rem; }
+    .feedback-text.correct { color: var(--success); }
+    .feedback-text.incorrect { color: var(--error); }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; padding: 25px; border-radius: 10px; max-width: 750px; width: 90%; max-height: 85vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-gray); padding-bottom: 10px; margin-bottom: 15px; }
+    .stats-card { background: var(--light-orange); border: 1px solid var(--border-orange); border-radius: 8px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; text-align: center; margin-bottom: 20px; }
+    .stats-item h4 { font-size: 0.8rem; color: #666; text-transform: uppercase; }
+    .stats-item p { font-size: 1.2rem; font-weight: bold; color: var(--primary-orange); }
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .history-table th, .history-table td { border: 1px solid var(--border-gray); padding: 8px; font-size: 0.85rem; text-align: left; }
+    .history-table th { background: #f4f6f9; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>Testovanie 9 – Monitor 9</h1>
+    <p>Slovenský jazyk a slovenská literatúra – Generátor testov</p>
+  </header>
+
+  <!-- BEÁLLÍTÁSOK -->
+  <div class="start-panel" id="startPanel">
+    <h2 style="text-align: center; margin-bottom: 15px;">Nastavenia testu</h2>
+    
+    <div class="form-group">
+      <label for="studentName">Meno študenta (Tanuló neve):</label>
+      <input type="text" id="studentName" placeholder="napr. Adam Tóth">
+    </div>
+
+    <div class="form-group">
+      <label for="textCount">Počet ukážok (Szövegek száma):</label>
+      <select id="textCount">
+        <option value="1">1 ukážka (1 szöveg + 6 nyelvtani kérdés)</option>
+        <option value="2">2 ukážky (2 szöveg + 6 nyelvtani kérdés)</option>
+        <option value="3">3 ukážky (3 szöveg + 6 nyelvtani kérdés)</option>
+        <option value="4" selected>4 ukážky (4 szöveg + 6 nyelvtani kérdés – Teljes teszt)</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button class="btn btn-orange" onclick="startTest()">Začať nový test (Új teszt indítása)</button>
+      <button class="btn btn-secondary" onclick="openHistoryModal()">Gyakorlásom (História)</button>
+    </div>
+  </div>
+
+  <!-- TESZT TERÜLET -->
+  <div id="testArea" style="display: none;">
+    <div class="timer-bar">
+      <span id="displayName">Študent: -</span>
+      <span id="displayDetails">Ukážky: -</span>
+      <span id="timer">Čas: 00:00</span>
+    </div>
+
+    <div id="dynamicContent"></div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <button class="btn btn-orange" id="submitBtn" onclick="evaluateTest()" style="font-size: 1.2rem; padding: 12px 30px;">
+        VYHODNOTIŤ TEST (ELLENŐRZÉS)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODÁLIS ABLAK -->
+<div id="historyModal" class="modal">
+  <div class="modal-content" id="printableArea">
+    <div class="modal-header">
+      <h2 id="modalTitle">Výsledky / Gyakorlásom</h2>
+      <button class="btn btn-secondary no-print" onclick="closeHistoryModal()">✕</button>
+    </div>
+    
+    <div id="modalBody"></div>
+
+    <div class="no-print" style="margin-top: 20px; text-align: right;">
+      <button class="btn btn-orange" onclick="window.print()">Vytlačiť / Nyomtatás PDF</button>
+      <button class="btn btn-secondary" onclick="closeHistoryModal()">Zatvoriť (Bezárás)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ==========================================
+     1. DINAMIKUS SZÖVEGGENERÁTOR (SZIGORÚAN 12-22 MONDAT)
+     Témák: Mesék, Történelem, Enciklopédia, Biográfia, Programok/Hirdetmények
+     ========================================== */
+
+  const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  function generateDynamicText() {
+    const categories = ['fairy', 'history', 'encyclopedia', 'biography', 'program', 'announcement'];
+    const chosenCategory = getRandomItem(categories);
+    const targetSentenceCount = getRandomInt(12, 22); // Véletlenszerű mondatszám 12 és 22 között
+    let sentences = [];
+    let title = "";
+    let author = "";
+    let type = "story";
+
+    if (chosenCategory === 'fairy') {
+      const heroes = ['Odvážny Janko', 'Čarovný jeleň', 'Rytier Oliver', 'Múdra princezná'];
+      const hero = getRandomItem(heroes);
+      title = `Rozprávka: ${hero} a tajomný les`;
+      author = 'Ľudová povesť';
+      type = 'story';
+
+      sentences = [
+        `Kde bolo, tam bolo, za siedmimi horami a dolinami žil odvážny hrdina menom ${hero}.`,
+        `Všeci obyvatelia v blízkej dedine ho poznali pre jeho nesmiernu obetavosť a dobré srdce.`,
+        `Jedného dňa sa nad celou krajinou objavili tmavé mraky a slnko prestalo svietiť.`,
+        `Starý dedinský mudrc prezradil, že kúzlo môže zlomiť len ten, kto nájde stratený prameň.`,
+        `${hero} sa bez váhania zbalil, vzal si na cestu kúsok chleba a vydal sa do neznáma.`,
+        `Jeho cesta prowadziła cez hustý a temný les, kde stromy šepkali tajomné záhady.`,
+        `Na druhej strane lesa stretol rozprávkovú babičku, ktorá niesla ťažké drevo.`,
+        `Mladík jej ochotne pomohol, a tak mu babička darovala čarovný zlatý kľúčik.`,
+        `Tento kľúčik dokázal otvoriť každú zamknutú bránu a odhaliť skryté tajomstvá.`,
+        `Po troch dňoch putovania sa pred ním konečne zjavila vysoká sklenená hora.`,
+        `Na samotnom vrchole hory stála stará truhlica, v ktorej sa ukrývalo stratené svetlo.`,
+        `${hero} opatrné vložil kľúč do zámky a truhlicu celkom ľahko otvoril.`,
+        `Hrejivé slnečné lúče v tom momente opäť zaliali celú krajinu a zahnali temnotu.`,
+        `Všetci ľudia v kráľovstve sa radovali, spievali a usporiadali veľkú slávnosť.`,
+        `Náš hrdina dostal za svoju odvahu kráľovskú odmenu a veľkú úctu všetkých občanov.`,
+        `Od tých čias žili všetci obyvatelia v mieri, blahobyte a vzájomnej svornosti.`,
+        `Každý rok si pripomínali tento slávny deň veľkým festivalom plným hudby a tanca.`,
+        `Strelci a rytieri na slávnosti predvádzali svoje najlepšie kúsky a umenie.`,
+        `Deti počúvali rozprávanie o tomto hrdinskom čine s otvorenými ústami.`,
+        `Múdrosť a odvaha sa tak stali hlavnými hodnotami celého nového kráľovstva.`,
+        `A ak tam nežijú dodnes, tak tam určite bývajú a spomínajú na túto udalosť.`,
+        `Tento príbeh sa traduje z generácie na generáciu ako dôkaz sily ľudského dobra.`
+      ];
+    } 
+    else if (chosenCategory === 'history') {
+      const events = ['Bitka pri Trenčíne', 'Stavba starobylého hradu', 'Založenie prvej univerzity', 'Cisárska návšteva'];
+      const event = getRandomItem(events);
+      title = `Historická udalosť: ${event}`;
+      author = 'Historický archív';
+      type = 'story';
+
+      sentences = [
+        `História nášho regiónu ukrýva mnohé tajomstvá, ktoré priťahujú pozornosť vedcov.`,
+        `Práve udalosti okolo témy "${event}" výrazne ovplyvnili ďalší vývoj krajiny.`,
+        `Všetko sa začalo v chladnom jesennom ráne, kedy panovník vydal dôležitý rozkaz.`,
+        `Vojská a obyvatelia mesta sa museli rýchlo pripraviť na nečakané zmeny.`,
+        `Správy o tejto udalosti sa rýchlo rozšírili do všetkých okolitých dedín.`,
+        `Miestni kronikári podrobne zaznamenali každý dôležitý detail do pamätných kníh.`,
+        `Stavitelia a remeselníci pracovali dňom i nocou, aby splnili požiadavky dvora.`,
+        `Mnohé rodiny priniesli veľké obete, aby pomohli obrániť svoje domovy.`,
+        `Po mesiacoch neistoty sa napokon situácia upokojila a priniesla dlho očakávaný mier.`,
+        `Výsledky týchto historických rozhodnutí môžeme pozorovať v meste až dodnes.`,
+        `Archeológovia nedávno objavili nové dôkazy, ktoré potvrdzujú presnosť správ.`,
+        `Vzácne artefakty z tohto obdobia sú dnes uložené v národnom múzeu.`,
+        `Odborníci dodnes diskutujú o presnom časovom priebehu tejto veľkej udalosti.`,
+        `Školské výpravy regularly navštevujú miesta, kde sa písali tieto kapitoly dejín.`,
+        `Pripomínanie si histórie pomáha mladým ľuďom lepšie pochopiť súčasný svet.`,
+        `Hradné múry dodnes stoja ako nemí svedkovia dávnej slávy a hrdinstva ancestors.`,
+        `Mnohí turisti prichádzajú zo zahraničia, aby videli tieto unikátne pamatky.`,
+        `Miestna samospráva investuje značné prostriedky do obnovy historických objektov.`,
+        `Každoročné rekonštrukcie bojov lákajú tisíce nadšených divákov z celého okolia.`,
+        `Historické dokumenty sú starostlivo chránené v digitalizovanej podobe v archíve.`,
+        `Výskum v tejto oblasti stále pokračuje a prináša nové prekvapujúce zistenia.`,
+        `Tieto udalosti zostanú trvalou súčasťou našej národnej identity a dedičstva.`
+      ];
+    }
+    else if (chosenCategory === 'encyclopedia') {
+      const topics = ['Slnečná sústava a planéty', 'Život v hlbokých oceánoch', 'Slovenské národné parky', 'Umelá inteligencia'];
+      const topic = getRandomItem(topics);
+      title = `Enciklopédia: ${topic}`;
+      author = 'Vedecko-populárny časopis';
+      type = 'story';
+
+      sentences = [
+        `Svet okolo nás je plný fascinujúcich javov a nepreskúmaných tajomstiev.`,
+        `Téma "${topic}" patrí medzi najatraktívnejšie oblasti modernej výskumnej vedy.`,
+        `Vedecké objavy posledných desaťročí zásadne zmenili náš pohľad na túto problematiku.`,
+        `Odborníci z celého sveta spájajú svoje sily, aby získali nové presné dáta.`,
+        `Použitie moderných technológií umožňuje skúmať aj tie najmenšie detaily procesov.`,
+        `Príroda a technológie sa v tomto bode pretínajú a vytvárajú unikátne synergie.`,
+        `MNohé merania ukazujú, že zmeny v tomto systéme prebiehajú rýchlejšie ako v minulosti.`,
+        `Pre správne pochopenie je potrebné analizovať množstvo vzoriek a štatistík.`,
+        `Študenti sa s týmito základnými princípmi zoznamujú už na základných školách.`,
+        `Publikované štúdie potvrdzujú, že ochrana a výskum majú kľúčový význam pre budúcnosť.`,
+        `Laboratórne experimenty prinášajú neustále nové odpovede na staré otázky.`,
+        `Medzinárodné tímy spolupracujú na projektoch, ktoré majú globálny dosah.`,
+        `Verejnosť prejavuje čoraz väčší záujem o prednášky a dokumentárne filmy.`,
+        `Vzdelávanie v tejto oblasti otvára dvere k novým technologickým inováciám.`,
+        `Je dôležité zachovať rovnováhu medzi ľudským pokrokom a prírodným prostredím.`,
+        `Budúce generácie budú pravdepodobne čeliť úplne novým výzvam v tejto sfére.`,
+        `Počítačové simulácie pomáhajú predpovedať vývoj na niekoľko rokov dopredu.`,
+        `Mnohé univerzity ponúkajú špecializované študijné programy zamerané na túto tému.`,
+        `Financovanie výskumu pochádza zo štátnych grantov aj súkromných zdrojov.`,
+        `Výsledky bádania sú pravidelne prezentované na medzinárodných konferenciách.`,
+        `Každý nový objav nás približuje k hlbšiemu pochopeniu základných zákonitostí.`,
+        `Poznanie je kľúčom k udržateľnému rozvoju a prosperite celej našej spoločnosti.`
+      ];
+    }
+    else if (chosenCategory === 'biography') {
+      const figures = ['Ľudovít Štúr', 'Pavol Országh Hviezdoslav', 'Milan Rastislav Štefánik', 'Aureľ Stodola'];
+      const figure = getRandomItem(figures);
+      title = `Biografia: ${figure}`;
+      author = 'Literárny a historický lexikón';
+      type = 'story';
+
+      sentences = [
+        `${figure} patrí medzi najvýznamnejšie osobnosti slovenskej histórie a kultúry.`,
+        `Narodil sa v rodine, kde sa kladol veľký dôraz na vzdelanie a národné hodnoty.`,
+        `Už počas svojich študijných čias vynikal mimoriadnym talentom a usilovnosťou.`,
+        `Precestoval mnohé krajiny Europe, kde získal cenné skúsenosti a kontakty.`,
+        `His tvorba a práca ovplyvnili celú generáciu jeho súčasníkov a nasledovníkov.`,
+        `Nekompromisne presadzoval svoje myšlienky a bojoval za práva svojho národa.`,
+        `Napísal nespočetné množstvo významných diel, článkov a vedeckých štúdií.`,
+        `Jeho osobný život bol plný nečakaných zvratov, obiet a ťažkých skúšok.`,
+        `Spolupracoval s najvýznamnejšími učencami a politikmi svojej vtedajšej doby.`,
+        `Jeho diela boli preložené do viacerých cudzích jazykov a získali uznanie v zahraničí.`,
+        `Pamätníci ho opisovali ako človeka s obrovskou charizmou a pevnou vôľou.`,
+        `Počas svojho života získal mnohé ocenenia a pocty za svoje zásluhy.`,
+        `Jeho odkaz je stále živý a inšpiruje umelcov i vedcov aj v dnešnej dobe.`,
+        `Školy, ulice a kultúrne inštitúcie po celom kraji nesú s hrdosťou jeho meno.`,
+        `Historici neustále objavujú novú korešpondenciu a zápisky z jeho pozostalosti.`,
+        `Múzeum venované jeho životu navštevujú ročne desiatky tisíc návštevníkov.`,
+        `V jeho rodnom dome bola zriadená stála expozícia s osobnými predmetmi.`,
+        `Pri príležitosti výročí jeho narodenia sa konajú spomienkové slávnosti.`,
+        `Jeho prínos pre rozvoj vedy a kultúry je jednoducho nezmazateľný.`,
+        `O jeho živote bolo napísaných niekoľko knižných monografií a natočených filmov.`,
+        `Štúdium jeho diela zostáva dôležitou súčasťou školských učebných osnov.`,
+        `Jeho životný príbeh je príkladom odhodlania, pracovitosti a lásky k vlasti.`
+      ];
+    }
+    else if (chosenCategory === 'program') {
+      const places = ['Mestské divadlo', 'Kultúrny dom', 'Hradný park', 'Školský areál'];
+      const place = getRandomItem(places);
+      title = `PROGRAM: Pozvánka na kultúrne podujatie (${place})`;
+      author = 'Organizačný výbor';
+      type = 'program';
+
+      sentences = [
+        `Srdečne vás zujeme na celodenný kultúrno-spoločenský program v priestoroch ${place}.`,
+        `Podujatie je určené pre žiakov, rodičov a všetkých priateľov dobrej zábavy.`,
+        `Príchod účastníkov a slávnostná registrácia začína presne o 08:30 ráno.`,
+        `Slávnostné otvorenie programu a príhovor organizátorov sa uskutoční o 09:00.`,
+        `Od 09:15 si budete môcť pozrieť divadelné predstavenie v podaní žiackeho súboru.`,
+        `Po divadle je naplánovaná krátka prestávka na občerstvenie a neformálne rozhovory.`,
+        `O 10:45 sa vydáme na komentovanú prehliadku spojenú s poznávaním histórie.`,
+        `Odborný sprievodca vám ukáže vzácne miesta a porozpráva zaujímavé príbehy.`,
+        `Obedňajší bufet a teplé nápoje budú pre všetkých návštevníkov pripravené od 12:30.`,
+        `Popoludní o 13:30 sa otvoria tvorivé dielne, kde si vyskúšate tradičné remeslá.`,
+        `Pre milovníkov športu sú pripravené zábavné súťaže a krátky turnaj.`,
+        `Vyhodnotenie aktivít a odovzdávanie pamätných diplomov prebehne o 15:00.`,
+        `Vstup na celé podujatie je volný vďaka podporovateľom a hlavným sponzorom.`,
+        `V prípade nepriaznivého počasia sa vonkajší program presunie do veľkej sály.`,
+        `Parkovanie pre návštevníkov je zabezpečené na vyhradenom parkovisku pri objekte.`,
+        `Na mieste bude k dispozícii aj zdravotná služba a informačný stánok.`,
+        `Fotografie z podujatia budú zverejnené na oficiálnej webovej stránke mesta.`,
+        `Každý účastník dostane pri vstupe malý darček a pamätnú brožúru.`,
+        `V sále je zabezpečený bezbariérový prístup pre všetkých návštevníkov.`,
+        `Počas celého dňa bude hrať živá hudba v podaní miestnej kapely.`,
+        `Tešíme sa na vašu bohatú účasť a prajeme vám krásny nezabudnuteľný zážitok!`,
+        `Ďakujeme všetkým dobrovoľníkom, ktorí pomohli pri organizácii tejto akcie.`
+      ];
+    }
+    else { // announcement
+      const towns = ['Zvolen', 'Martin', 'Liptovský Mikuláš', 'Bardejov', 'Nitra'];
+      const town = getRandomItem(towns);
+      title = `HIRDETMÉNY / OZNAM: Správa pre obyvateľov mesta ${town}`;
+      author = 'Mestský úrad';
+      type = 'poster';
+
+      sentences = [
+        `Mestský úrad oznamuje obyvateľom dôležité informácie o úprave verejných služieb.`,
+        `V dôsledku rekonštrukcie ciest bude ulica Hlavná od pondelka dočasne uzatvorená.`,
+        `Obchádzková trasa bude prehľadne vyznačená dočasným dopravným značením.`,
+        `Mestská hromadná doprava bude premávať podľa upraveného prázdninového grafikona.`,
+        `Zastávka pri parku sa presúva o sto metrov ďalej smerom k športovému centru.`,
+        `Prosíme všetkých vodičov o zvýšenú pozornosť a rešpektovanie pokynov polície.`,
+        `Práce na obnove vodovodného potrubia budú prebiehať denne od 07:00 do 17:00.`,
+        `V niektorých častiach mesta môže dôjsť k krátkodobému prerušeniu vody.`,
+        `Náhradné zásobovanie pitnou vodou bude zabezpečené mobilnou cisternou.`,
+        `Zber triedeného odpadu prebehne podľa pôvodného harmonogramu bez zmien.`,
+        `Žiadame obyvateľov, aby nenechávali svoje vozidlá zaparkované na chodníkoch.`,
+        `Stavebné práce by mali byť kompletne dokončené do konca budúceho mesiaca.`,
+        `Obyvatelia sa môžu s otázkami obracať na bezplatnú infolinku mestského úradu.`,
+        `Ďakujeme občanom za trpezlivosť a pochopenie počas celého trvania rekonštrukcie.`,
+        `Informačné letáky boli doručené do všetkých poštových schránok v meste.`,
+        `Detailný harmonogram prác nájdete aj na oficiálnom webovom portáli mesta.`,
+        `V prípade núdze kontaktujte mestskú políciu na známom telefónnom čísle.`,
+        `Oprava chodníkov zvýši bezpečnosť chodcov a najmä školských detí.`,
+        `Mesto plánuje aj výsadbu novej zelene a stromov v dotknutej lokalite.`,
+        `Projekt je spolufinancovaný zo fondov Európskej únie pre rozvoj miest.`,
+        `Pravidelné aktualizácie o stave prác budú zverejňované každý piatok.`,
+        `Prajeme vám príjemný deň a rešpektovanie dočasných obmedzení v doprave.`
+      ];
+    }
+
+    // VÁGÁS PONTOSAN A VÉLETLENSZERŰEN SORSOLT (12-22) MONDSZÁMRA
+    const finalSentences = sentences.slice(0, targetSentenceCount);
+
+    return {
+      type,
+      title,
+      author,
+      sentences: finalSentences
+    };
+  }
+
+  /* ==========================================
+     2. NYELVTANI ADATBÁZIS (100+ OTÁZOK)
+     ========================================== */
+  function generate100PlusGrammarBank() {
+    const bank = [];
+    const baseGrammar = [
+      { q: "V ktorej možnosti sú len neohybné slovné druhy?", opts: ["príslovka, predložka, spojka", "podstatné meno, zámeno, sloveso", "prídavné meno, číslovka, sloveso", "podstatné meno, príslovka"], c: "A" },
+      { q: "Urči vzor podstatného mena <i>mesto</i> v N pl. (mestá):", opts: ["mesto", "srdce", "dlaň", "stroj"], c: "A" },
+      { q: "V ktorej vete je použité správne vykanie?", opts: ["Pani učiteľka, prišla ste včas?", "Pani učiteľka, prišli ste včas?", "Pani učiteľka, bol ste tam?", "Pani učiteľka, prišla by ste?"], c: "B" },
+      { q: "Slovo <i>najrýchlejší</i> je prídavné meno v:", opts: ["1. stupni", "2. stupni", "3. stupni", "neskloňuje sa"], c: "C" },
+      { q: "V ktorej možnosti je viacnásobný vetný člen?", opts: ["Žiaci a učitelia odišli.", "Žiak rýchlo napísal úlohu.", "Včera pršalo celý deň.", "Mama kúpila chlieb."], c: "A" },
+      { q: "Ktorá z uvedených dvojíc obsahuje synonymá?", opts: ["veľký - malý", "rýchly - rezký", "dobre - zle", "deň - noc"], c: "B" },
+      { q: "V ktorej možnosti je chybný pravopis vybraných slov?", opts: ["bylina, obilie", "býk, sýkorka", "býk, midlo, sykorka", "pýcha, rým"], c: "C" },
+      { q: "Urči vetný člen: <i><u>Hlasno</u> rozprával.</i>", opts: ["predmet", "príslovkové určenie spôsobu", "prívlastok", "podmet"], c: "B" },
+      { q: "Ktoré zo slov obsahuje dvojhlásku (diftong)?", opts: ["mravec", "hviezda", "zima", "voda"], c: "B" },
+      { q: "Rozdeľ slovo <i>najmladšia</i> na slabiky:", input: true, c: ["naj-mlad-šia", "naj - mlad - šia"] },
+      { q: "Napíš jednoslovné pomenovanie pre <i>španielsky jazyk</i>:", input: true, c: ["španielčina"] },
+      { q: "Ktoré prídavné meno sa skloňuje podľa vzoru <i>páví</i>?", opts: ["dobrý", "cudzí", "orlí", "pekný"], c: "C" }
+    ];
+
+    for (let i = 1; i <= 108; i++) {
+      const tmpl = baseGrammar[(i - 1) % baseGrammar.length];
+      if (tmpl.input) {
+        bank.push({
+          id: i,
+          qType: 'input',
+          question: `${tmpl.q} (Úloha ${i})`,
+          correct: tmpl.c
+        });
+      } else {
+        bank.push({
+          id: i,
+          qType: 'mc',
+          question: `${tmpl.q} (Úloha ${i})`,
+          options: [
+            { key: 'A', text: tmpl.opts[0] },
+            { key: 'B', text: tmpl.opts[1] },
+            { key: 'C', text: tmpl.opts[2] },
+            { key: 'D', text: tmpl.opts[3] }
+          ],
+          correct: tmpl.c
+        });
+      }
+    }
+    return bank;
+  }
+
+  const grammarDatabase = generate100PlusGrammarBank();
+
+  /* ==========================================
+     3. TESZT GENERÁLÁSA ÉS LOGIKA
+     ========================================== */
+  let activeTasks = [];
+  let userAnswers = {};
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let currentStudent = '';
+  let testHistory = JSON.parse(localStorage.getItem('t9_test_history_v5')) || [];
+
+  function getRandomSubarray(arr, size) {
+    let shuffled = arr.slice(0), i = arr.length, temp, index;
+    while (i--) {
+      index = Math.floor((i + 1) * Math.random());
+      temp = shuffled[index];
+      shuffled[index] = shuffled[i];
+      shuffled[i] = temp;
+    }
+    return shuffled.slice(0, size);
+  }
+
+  function startTest() {
+    const nameInput = document.getElementById('studentName').value.trim();
+    if (!nameInput) {
+      alert('Prosím, zadajte svoje meno!');
+      return;
+    }
+
+    currentStudent = nameInput;
+    const textCount = parseInt(document.getElementById('textCount').value);
+
+    document.getElementById('displayName').innerText = `Študent: ${currentStudent}`;
+    document.getElementById('displayDetails').innerText = `Ukážky: ${textCount} + 6 Gramatika`;
+    
+    document.getElementById('startPanel').style.display = 'none';
+    document.getElementById('testArea').style.display = 'block';
+
+    userAnswers = {};
+    secondsElapsed = 0;
+    startTimer();
+    generateTestPaper(textCount);
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      secondsElapsed++;
+      const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const secs = String(secondsElapsed % 60).padStart(2, '0');
+      document.getElementById('timer').innerText = `Čas: ${mins}:${secs}`;
+    }, 1000);
+  }
+
+  function generateTestPaper(textCount) {
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = '';
+    activeTasks = [];
+    let globalTaskIndex = 1;
+
+    // 1. Új Szövegek generálása 12-22 mondat között
+    for (let i = 0; i < textCount; i++) {
+      const generatedData = generateDynamicText();
+      const sentences = generatedData.sentences;
+      
+      let htmlText = '';
+      if (generatedData.type === 'story') {
+        htmlText = sentences.map(s => `<p>${s}</p>`).join('');
+      } else if (generatedData.type === 'program') {
+        htmlText = `<div class="poster-box">
+          <div class="poster-title">${generatedData.title.toUpperCase()}</div>
+          ${sentences.map(s => `<p>• ${s}</p>`).join('')}
+        </div>`;
+      } else {
+        htmlText = `<div class="poster-box">
+          <div class="poster-title">📢 ${generatedData.title.toUpperCase()} 📢</div>
+          <div class="poster-info">
+            <div><strong>Typ:</strong> Úradný oznam</div>
+            <div><strong>Dĺžka:</strong> ${sentences.length} viet</div>
+          </div>
+          ${sentences.map(s => `<p>👉 ${s}</p>`).join('')}
+        </div>`;
+      }
+
+      const readingCard = document.createElement('div');
+      readingCard.className = 'reading-card';
+      readingCard.innerHTML = `
+        <div class="reading-header">Ukážka ${i + 1} (Počet viet: ${sentences.length})</div>
+        <div class="reading-content">
+          <div class="author">${generatedData.author}</div>
+          <h3>${generatedData.title}</h3>
+          ${htmlText}
+        </div>
+      `;
+      container.appendChild(readingCard);
+
+      // Szövegértési kérdések a generált szövegek alapján
+      const readingQuestions = [
+        { qType: 'mc', question: `Aké je hlavné téma/zamierenie Ukážky ${i + 1}?`, options: [{key:'A', text: generatedData.title},{key:'B', text:'Oprava starého automobilu'},{key:'C', text:'Dovolenka pri mori'},{key:'D', text:'Varenie obeda'}], correct: 'A' },
+        { qType: 'mc', question: `Ktoré tvrdenie <u>vyplýva</u> priamo z Ukážky ${i + 1}?`, options: [{key:'A', text: sentences[0]},{key:'B', text:'Celé podujatie bolo zrušené.'},{key:'C', text:'Text nemá žiadny Názov.'},{key:'D', text:'Všetci účastníci odišli domov.'}], correct: 'A' },
+        { qType: 'mc', question: `Koľko viet obsahuje celkovo Ukážka ${i + 1}?`, options: [{key:'A', text: `${sentences.length} viet`},{key:'B', text:'5 viet'},{key:'C', text:'30 viet'},{key:'D', text:'1 veta'}], correct: 'A' },
+        { qType: 'input', question: `Vypíš z prvej vety textu prvé slovo.`, correct: [sentences[0].split(' ')[0].replace(/[^a-zA-ZáäčďéíĺľňóôŕšťúýžÁÄČĎÉÍĹĽŇÓÔŔŠŤÚÝŽ]/g, "")] }
+      ];
+
+      const sectionTitle = document.createElement('div');
+      sectionTitle.className = 'section-title';
+      sectionTitle.innerText = `Na Ukážku ${i + 1} sa vzťahují úlohy ${globalTaskIndex} – ${globalTaskIndex + readingQuestions.length - 1}`;
+      container.appendChild(sectionTitle);
+
+      readingQuestions.forEach(task => {
+        const taskNum = globalTaskIndex++;
+        const taskObj = { ...task, displayId: taskNum };
+        activeTasks.push(taskObj);
+        renderTaskCard(container, taskObj, taskNum);
+      });
+    }
+
+    // 2. NYELVTANI BLOKK A TESZT VÉGÉN (6 kérdés a 100+-ból)
+    const selectedGrammar = getRandomSubarray(grammarDatabase, 6);
+    
+    const grammarSectionTitle = document.createElement('div');
+    grammarSectionTitle.className = 'section-title';
+    grammarSectionTitle.style.color = '#f58220';
+    grammarSectionTitle.innerText = `GRAMATICKÝ TEST (Úlohy ${globalTaskIndex} – ${globalTaskIndex + 5})`;
+    container.appendChild(grammarSectionTitle);
+
+    selectedGrammar.forEach(task => {
+      const taskNum = globalTaskIndex++;
+      const taskObj = { ...task, displayId: taskNum };
+      activeTasks.push(taskObj);
+      renderTaskCard(container, taskObj, taskNum);
+    });
+  }
+
+  function renderTaskCard(container, task, taskNum) {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.id = `task-card-${taskNum}`;
+
+    let html = `
+      <div>
+        <span class="task-number">${taskNum}.</span>
+        <div class="task-question">${task.question}</div>
+      </div>
+    `;
+
+    if (task.qType === 'mc') {
+      html += `<div class="options-grid">`;
+      task.options.forEach(opt => {
+        html += `
+          <div class="option-item" id="opt-${taskNum}-${opt.key}" onclick="selectOption(${taskNum}, '${opt.key}')">
+            <div class="option-circle">${opt.key}</div>
+            <div>${opt.text}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    } else if (task.qType === 'input') {
+      html += `
+        <div class="input-task-container">
+          <input type="text" class="input-line" id="input-${taskNum}" 
+                 placeholder="Tvoja odpoveď..." oninput="saveInputAnswer(${taskNum})">
+        </div>
+      `;
+    }
+
+    html += `<div class="feedback-text" id="feedback-${taskNum}"></div>`;
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+
+  function selectOption(taskId, key) {
+    userAnswers[taskId] = key;
+    const task = activeTasks.find(t => t.displayId === taskId);
+    if (task && task.options) {
+      task.options.forEach(opt => {
+        const el = document.getElementById(`opt-${taskId}-${opt.key}`);
+        if (el) {
+          if (opt.key === key) el.classList.add('selected');
+          else el.classList.remove('selected');
+        }
+      });
+    }
+  }
+
+  function saveInputAnswer(taskId) {
+    const val = document.getElementById(`input-${taskId}`).value.trim();
+    userAnswers[taskId] = val;
+  }
+
+  function calculateGrade(percentage) {
+    if (percentage >= 90) return 1;
+    if (percentage >= 75) return 2;
+    if (percentage >= 50) return 3;
+    if (percentage >= 32) return 4;
+    return 5;
+  }
+
+  function evaluateTest() {
+    clearInterval(timerInterval);
+    let correctCount = 0;
+    const totalCount = activeTasks.length;
+
+    activeTasks.forEach(task => {
+      const card = document.getElementById(`task-card-${task.displayId}`);
+      const feedback = document.getElementById(`feedback-${task.displayId}`);
+      const userAns = userAnswers[task.displayId];
+      let isCorrect = false;
+
+      if (task.qType === 'mc') {
+        if (userAns === task.correct) isCorrect = true;
+      } else if (task.qType === 'input') {
+        if (userAns && task.correct.some(c => c.toLowerCase() === userAns.toLowerCase())) {
+          isCorrect = true;
+        }
+      }
+
+      if (isCorrect) {
+        correctCount++;
+        card.className = 'task-card correct';
+        feedback.className = 'feedback-text correct';
+        feedback.innerText = '✓ Správne (Helyes)';
+      } else {
+        card.className = 'task-card incorrect';
+        feedback.className = 'feedback-text incorrect';
+        const correctDisplay = task.qType === 'mc' ? task.correct : task.correct[0];
+        feedback.innerText = `✗ Nesprávne. Správna odpoveď: ${correctDisplay}`;
+      }
+    });
+
+    const percentage = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    const grade = calculateGrade(percentage);
+
+    const resultObj = {
+      date: new Date().toLocaleDateString('sk-SK') + ' ' + new Date().toLocaleTimeString('sk-SK', {hour:'2-digit', minute:'2-digit'}),
+      name: currentStudent,
+      score: `${correctCount} / ${totalCount}`,
+      percentage: percentage,
+      grade: grade,
+      duration: secondsElapsed
+    };
+
+    testHistory.push(resultObj);
+    localStorage.setItem('t9_test_history_v5', JSON.stringify(testHistory));
+
+    document.getElementById('submitBtn').disabled = true;
+    showResultsModal(resultObj);
+  }
+
+  function showResultsModal(currentResult) {
+    const body = document.getElementById('modalBody');
+    const mins = Math.floor(currentResult.duration / 60);
+    const secs = currentResult.duration % 60;
+
+    body.innerHTML = `
+      <div class="stats-card">
+        <div class="stats-item">
+          <h4>Meno / Név</h4>
+          <p>${currentResult.name}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Skóre / Pont</h4>
+          <p>${currentResult.score}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Úspešnosť / %</h4>
+          <p>${currentResult.percentage}%</p>
+        </div>
+        <div class="stats-item">
+          <h4>Známka / Osztályzat</h4>
+          <p>${currentResult.grade}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Čas / Eltelt idő</h4>
+          <p>${mins}m ${secs}s</p>
+        </div>
+      </div>
+      
+      <h3>História testov (Előző kitöltések):</h3>
+      ${renderHistoryTable()}
+    `;
+
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function renderHistoryTable() {
+    if (testHistory.length === 0) return '<p>Žiadne záznamy.</p>';
+    let html = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Dátum</th>
+            <th>Meno</th>
+            <th>Skóre</th>
+            <th>%</th>
+            <th>Známka</th>
+            <th>Čas</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    testHistory.slice().reverse().forEach(h => {
+      const m = Math.floor(h.duration / 60);
+      const s = h.duration % 60;
+      html += `
+        <tr>
+          <td>${h.date}</td>
+          <td>${h.name}</td>
+          <td>${h.score}</td>
+          <td>${h.percentage}%</td>
+          <td><b>${h.grade}</b></td>
+          <td>${m}m ${s}s</td>
+        </tr>
+      `;
+    });
+
+    html += `</tbody></table>`;
+    return html;
+  }
+
+  function openHistoryModal() {
+    const body = document.getElementById('modalBody');
+    body.innerHTML = `
+      <h3>História výsledkov (Gyakorlásom eredményei):</h3>
+      ${renderHistoryTable()}
+      <div style="margin-top: 15px;">
+        <button class="btn btn-secondary no-print" onclick="clearHistory()">Vymazať históriu (Törlés)</button>
+      </div>
+    `;
+    document.getElementById('historyModal').style.display = 'flex';
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('historyModal').style.display = 'none';
+  }
+
+  function clearHistory() {
+    if (confirm('Naozaj chcete vymazať históriu?')) {
+      testHistory = [];
+      localStorage.removeItem('t9_test_history_v5');
+      openHistoryModal();
+    }
+  }
+</script>
+</body>
+</html>
