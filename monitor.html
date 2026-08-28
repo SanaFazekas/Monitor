@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Testovanie 9 – Slovenský jazyk a slovenská literatúra</title>
+  <style>
+    :root {
+      --primary-orange: #f58220;
+      --light-orange: #fff8f2;
+      --border-orange: #fca34d;
+      --dark-text: #2c3e50;
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --success: #2e7d32;
+      --success-bg: #e8f5e9;
+      --error: #c62828;
+      --error-bg: #ffebee;
+      --border-gray: #dcdfe6;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--dark-text); padding: 20px; display: flex; justify-content: center; }
+    .app-container { max-width: 950px; width: 100%; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); padding: 25px; }
+
+    header { text-align: center; margin-bottom: 25px; border-bottom: 3px solid var(--primary-orange); padding-bottom: 15px; }
+    header h1 { color: var(--primary-orange); font-size: 1.8rem; margin-bottom: 5px; }
+    header p { color: #666; font-size: 0.95rem; }
+
+    .start-panel { background: var(--light-orange); border: 2px solid var(--border-orange); border-radius: 10px; padding: 20px; margin-bottom: 25px; }
+    .form-group { margin-bottom: 15px; max-width: 500px; margin-left: auto; margin-right: auto; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 6px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-gray); border-radius: 6px; font-size: 1rem; background: #fff; }
+    .button-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+
+    .btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: background 0.2s ease; }
+    .btn-orange { background: var(--primary-orange); color: white; }
+    .btn-orange:hover { background: #e06d0b; }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-secondary:hover { background: #5a6268; }
+    .btn-danger { background: #c62828; color: white; }
+    .btn-danger:hover { background: #a31f1f; }
+
+    .timer-bar { display: flex; justify-content: space-between; align-items: center; background: #eee; padding: 10px 20px; border-radius: 6px; margin-bottom: 20px; font-weight: bold; }
+
+    .reading-card { border: 2px solid var(--border-orange); border-radius: 10px; background: var(--light-orange); margin-bottom: 30px; overflow: hidden; }
+    .reading-header { background: var(--border-orange); color: white; padding: 10px 15px; font-weight: bold; font-size: 1.1rem; }
+    .reading-content { padding: 20px; line-height: 1.6; font-size: 0.98rem; }
+    .reading-content h3 { text-align: center; margin-bottom: 10px; color: var(--primary-orange); }
+    .reading-content .author { text-align: center; font-style: italic; margin-bottom: 15px; }
+
+    .section-title { text-align: center; font-size: 1.2rem; font-weight: bold; margin: 25px 0 15px 0; color: var(--dark-text); border-bottom: 2px dotted #ccc; padding-bottom: 5px; }
+    .task-card { border: 2px solid var(--border-orange); border-radius: 10px; padding: 15px 20px; margin-bottom: 20px; background: #fff; }
+    .task-number { display: inline-block; background: var(--border-orange); color: white; font-weight: bold; padding: 3px 8px; border-radius: 5px; margin-right: 10px; font-size: 1rem; }
+    .task-question { font-size: 1.05rem; font-weight: bold; display: inline; line-height: 1.5; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+    .option-item { display: flex; align-items: center; padding: 10px 14px; border: 1px solid var(--border-gray); border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+    .option-item:hover { background: #f8f9fa; }
+    .option-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--primary-orange); color: var(--primary-orange); display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
+    .option-item.selected { border-color: var(--primary-orange); background: var(--light-orange); }
+    .option-item.selected .option-circle { background: var(--primary-orange); color: white; }
+
+    .input-task-container { margin-top: 15px; }
+    .input-line { width: 100%; max-width: 500px; border: none; border-bottom: 2px solid var(--dark-text); padding: 8px 5px; font-size: 1.1rem; outline: none; background: transparent; }
+    .input-line:focus { border-bottom-color: var(--primary-orange); }
+
+    .task-card.correct { border-color: var(--success); background-color: var(--success-bg); }
+    .task-card.incorrect { border-color: var(--error); background-color: var(--error-bg); }
+    .feedback-box { margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 0.95rem; }
+    .feedback-box.correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .feedback-box.incorrect { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    .explanation { margin-top: 6px; font-style: italic; font-size: 0.9rem; color: #333; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; padding: 25px; border-radius: 10px; max-width: 750px; width: 90%; max-height: 85vh; overflow-y: auto; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-gray); padding-bottom: 10px; margin-bottom: 15px; }
+    .stats-card { background: var(--light-orange); border: 1px solid var(--border-orange); border-radius: 8px; padding: 15px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; text-align: center; margin-bottom: 20px; }
+    .stats-item h4 { font-size: 0.8rem; color: #666; text-transform: uppercase; }
+    .stats-item p { font-size: 1.2rem; font-weight: bold; color: var(--primary-orange); }
+    .history-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .history-table th, .history-table td { border: 1px solid var(--border-gray); padding: 8px; font-size: 0.85rem; text-align: left; }
+    .history-table th { background: #f4f6f9; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>Testovanie 9 – Monitor 9</h1>
+    <p>Slovenský jazyk a slovenská literatúra – Generátor komplexných testov</p>
+  </header>
+
+  <div class="start-panel" id="startPanel">
+    <h2 style="text-align: center; margin-bottom: 15px;">Nastavenia testu</h2>
+    
+    <div class="form-group">
+      <label for="studentName">Meno a priezvisko žiaka:</label>
+      <input type="text" id="studentName" placeholder="napr. Mária Horváthová">
+    </div>
+
+    <div class="form-group">
+      <label for="textCount">Počet textových ukážok:</label>
+      <select id="textCount">
+        <option value="1">1 ukážka + 5 všeobecných gramatických úloh</option>
+        <option value="2">2 ukážky + 5 všeobecných gramatických úloh</option>
+        <option value="3">3 ukážky + 5 všeobecných gramatických úloh</option>
+        <option value="4" selected>4 ukážky + 5 všeobecných gramatických úloh (Kompletný test)</option>
+      </select>
+    </div>
+
+    <div class="button-group">
+      <button class="btn btn-orange" onclick="startTest()">Začať nový test</button>
+      <button class="btn btn-secondary" onclick="openHistoryModal()">Moje výsledky a štatistika</button>
+      <button class="btn btn-danger" onclick="clearHistory()">Vymazať štatistiku</button>
+    </div>
+  </div>
+
+  <div id="testArea" style="display: none;">
+    <div class="timer-bar">
+      <span id="displayName">Žiak: -</span>
+      <span id="displayDetails">Ukážky: -</span>
+      <span id="timer">Čas: 00:00</span>
+    </div>
+
+    <div id="dynamicContent"></div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <button class="btn btn-orange" id="submitBtn" onclick="evaluateTest()" style="font-size: 1.2rem; padding: 12px 30px;">
+        VYHODNOTIŤ TEST
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="historyModal" class="modal">
+  <div class="modal-content" id="printableArea">
+    <div class="modal-header">
+      <h2 id="modalTitle">Výsledky a štatistika</h2>
+      <button class="btn btn-secondary no-print" onclick="closeHistoryModal()">✕</button>
+    </div>
+    
+    <div id="modalBody"></div>
+
+    <div class="no-print" style="margin-top: 20px; text-align: right;">
+      <button class="btn btn-orange" onclick="window.print()">Vytlačiť / Uložiť ako PDF</button>
+      <button class="btn btn-secondary" onclick="closeHistoryModal()">Zatvoriť</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+  const shuffleArray = (arr) => arr.slice().sort(() => Math.random() - 0.5);
+
+  function buildOptions(correctText, distractorTexts) {
+    const rawOptions = [
+      { text: correctText, isCorrect: true },
+      ...distractorTexts.map(t => ({ text: t, isCorrect: false }))
+    ];
+    const shuffledRaw = shuffleArray(rawOptions);
+    const keys = ['A', 'B', 'C', 'D'];
+    
+    let correctKey = '';
+    const finalOptions = shuffledRaw.map((item, index) => {
+      const key = keys[index];
+      if (item.isCorrect) correctKey = key;
+      return { key: key, text: item.text };
+    });
+
+    return { options: finalOptions, correctKey: correctKey };
+  }
+
+  /* ========================================================
+     ŠTRUKTÚROVANÉ TEXTY A RÔZNORODÉ ÚLOHY PRE KAŽDÝ ŽÁNER
+     ======================================================== */
+  const textBank = [
+    {
+      category: 'fairy',
+      title: 'O múdrom zlatníkovi',
+      author: 'Pavol Dobšinský',
+      sentencesShort: [
+        'Žil raz v chudobnej dedinke mládenec menom Martin, ktorý vynikal nezvyčajným remeselným zručnosťou.',
+        'Jeho jemné prstoklady dokázali zo obyčajného kusu kovu vytvoriť tie najkrajšie šperky v šírom okolí.',
+        'Miestny hradný pán si ho dal zavolať a položil pred neho ťažkú podmienku pod hrozbou vyhnanstva.',
+        'Martin mal do troch dní zhotoviť prsteň, ktorý by v tmavom lese svietil jasnejšie ako ranná zora.',
+        'Mládenec sa nevzdal, použil vzácny jasný kremeň zo skál a svoju vytrvalú prácu úspešne dokončil.',
+        'Hradný pán obdivoval jeho um a namiesto trestu ho vymenoval za hlavného kráľovského klenotníka.',
+        'Martin tak zachránil svoju rodinu pred biedou a stal sa vzorom pre všetkých poctivých remeselníkov.',
+        'Zákazníci z ďalekých krajov prichádzali, aby obdivovali jeho majstrovské diela a poctivosť.',
+        'Jeho príbeh sa rozprával z pokolenia na pokolenie ako dôkaz, že poctivá práca vždy zvíťazí.',
+        'A tak žil Martin v úcte a dostatku až do svojej hlbokej staroby.'
+      ],
+      sentencesLong: [
+        'Žil raz v chudobnej dedinke mládenec menom Martin, ktorý vynikal nezvyčajným remeselným zručnosťou.',
+        'Jeho jemné prstoklady dokázali zo obyčajného kusu kovu vytvoriť tie najkrajšie šperky v šírom okolí.',
+        'Miestny hradný pán si ho dal zavolať a položil pred neho ťažkú podmienku pod hrozbou vyhnanstva.',
+        'Martin mal do troch dní zhotoviť prsteň, ktorý by v tmavom lese svietil jasnejšie ako ranná zora.',
+        'Mládenec sa nevzdal, použil vzácny jasný kremeň zo skál a svoju vytrvalú prácu úspešne dokončil.',
+        'Hradný pán obdivoval jeho um a namiesto trestu ho vymenoval za hlavného kráľovského klenotníka.',
+        'Martin tak zachránil svoju rodinu pred biedou a stal sa vzorom pre všetkých poctivých remeselníkov.',
+        'Zákazníci z ďalekých krajov prichádzali, aby obdivovali jeho majstrovské diela a poctivosť.',
+        'Jeho príbeh sa rozprával z pokolenia na pokolenie ako dôkaz, že poctivá práca vždy zvíťazí.',
+        'Starý hradný pán neskôr odovzdal správu panstva svojmu spravodlivému synovi.',
+        'Nový panovník si Martina ešte viac vážil a podporoval remeslá v celom kraji.',
+        'Učeníci, ktorých Martin vychoval, šírili slávu jeho klenotníckej dielne po celom svete.',
+        'Žiadne bohatstvo ho však nezmenilo a stále zostal skromným človekom s dobrým srdcom.',
+        'Pomáhal chudobným obyvateľom dediny a zakladal školy pre mladých remeselníkov.',
+        'Jeho rodný domček sa stal pamätným miestom, kam chodili ľudia po radu a povzbudenie.',
+        'A tak žil Martin v úcte, mieri a dostatku až do svojej hlbokej staroby.'
+      ],
+      generateQuestions: function(isLong) {
+        let q = [];
+        // Task 1: Literárny druh a žáner
+        const opt1 = buildOptions("epika, umelecký rozprávkový príbeh", [
+          "lyrika, elegická báseň s ponaučením",
+          "dráma, historická jednoaktovka",
+          "publicistika, reportáž z histórie"
+        ]);
+        q.push({ type: 'mc', q: "Ktorá z možností najpresnejšie určuje literárny druh a žáner tejto ukážky?", options: opt1.options, correct: opt1.correctKey, exp: "Ukážka je epický rozprávkový príbeh s prvkami ľudovej slovesnosti." });
+
+        // Task 2: Kontextuálne synonymum
+        const opt2 = buildOptions("dôvtip, múdrosť a schopnosť", [
+          "majetok a peniaze",
+          "pýcha a povýšenectvo",
+          "fyzická sila a neohrozenosť"
+        ]);
+        q.push({ type: 'mc', q: "V 6. vete sa uvádza: <i>'Hradný pán obdivoval jeho um...'</i>. Aký význam má slovo <b>um</b> v danom kontexte?", options: opt2.options, correct: opt2.correctKey, exp: "Slovo 'um' v tomto kontexte znamená rozum, dôvtip a remeselný um." });
+
+        // Task 3: Umelecký prostriedok
+        const opt3 = buildOptions("prirovnanie", ["metafora", "personifikácia", "epiteton"]);
+        q.push({ type: 'mc', q: "Aký umelecký jazykový prostriedok sa nachádza v spojení <i>'svietil jasnejšie ako ranná zora'</i> (4. veta)?", options: opt3.options, correct: opt3.correctKey, exp: "Spojenie s gramatickou spojkou 'ako' vyjadruje prirovnanie." });
+
+        // Task 4: Doplňovací slovný druh
+        q.push({
+          type: 'input',
+          q: "Vypíš z 1. vety <b>vlastné podstatné meno</b> v základnom tvare (nominatív jednotného čísla):",
+          correct: ["Martin"],
+          exp: "Vlastným podstatným menom je meno mládenca 'Martin'."
+        });
+
+        if (isLong) {
+          // Task 5: Charakteristika postavy
+          const opt5 = buildOptions("vytrvalý, zručný a skromný", [
+            "chamtivý, tvrdohlavý a pomstychtivý",
+            "ľahkomyseľný, bojazlivý a lenivý",
+            "prísny, nespravodlivý a pýšny"
+          ]);
+          q.push({ type: 'mc', q: "Ktorá trojica prídavných mien najvýstižnejšie charakterizuje hlavnú postavu Martina?", options: opt5.options, correct: opt5.correctKey, exp: "Text vyzdvihuje Martinovu poctivosť, remeselný um a skromnosť." });
+
+          // Task 6: Vetný člen
+          const opt6 = buildOptions("príslovkové určenie miesta", ["priamy predmet", "zhodný prívlastok", "podmet"]);
+          q.push({ type: 'mc', q: "Akým vetným členom je slovo <i>'v dedinke'</i> v 1. vete <i>('Žil raz v chudobnej dedinke...')</i>?", options: opt6.options, correct: opt6.correctKey, exp: "Slovné spojenie odpovedá na otázku Kde? (v dedinke) = príslovkové určenie miesta." });
+        }
+        return q;
+      }
+    },
+    {
+      category: 'history',
+      title: 'Devín – svedok našich dejín',
+      author: 'Dejepisná knižnica',
+      sentencesShort: [
+        'Hrad Devín patrí k najvýznamnejším historickým a archeologickým lokalitám v strednej Európe.',
+        'Svojou strategickou polohou na sútoku riek Dunaj a Morava priťahoval osídlenie už od praveku.',
+        'V období Veľkej Moravy bol významnou pevnosťou, ktorá chránila územie pred výbojmi susedov.',
+        'Archeologické výskumy potvrdili prítomnosť starovekých Rimanov i skorších keltských kmeňov.',
+        'V roku 1809 zničili pevnosť napoleonské vojská, čím sa hrad zmenil na majestátnu zrúcaninu.',
+        'V 19. storočí sa Devín stal symbolom národného obrodenia a štúrovskej poézie.',
+        'Dnes je hradný areál národnou kultúrnou pamiatkou prístupnou širokej verejnosti.',
+        'Návštevníci tu môžu obdivovať expozície náhodných objavov aj zachované pamätné tabule.',
+        'Areál ponúka jedinečný panoramatický pohľad na susedné Rakúsko a sútok dvoch riek.',
+        'Zachovanie tejto pamiatky pripomína budúcim generáciám korene našej štátnosti.'
+      ],
+      sentencesLong: [
+        'Hrad Devín patrí k najvýznamnejším historickým a archeologickým lokalitám v strednej Európe.',
+        'Svojou strategickou polohou na sútoku riek Dunaj a Morava priťahoval osídlenie už od praveku.',
+        'V období Veľkej Moravy bol významnou pevnosťou, ktorá chránila územie pred výbojmi susedov.',
+        'Archeologické výskumy potvrdili prítomnosť starovekých Rimanov i skorších keltských kmeňov.',
+        'V roku 1809 zničili pevnosť napoleonské vojská, čím sa hrad zmenil na majestátnu zrúcaninu.',
+        'V 19. storočí sa Devín stal symbolom národného obrodenia a štúrovskej poézie.',
+        'Dnes je hradný areál národnou kultúrnou pamiatkou prístupnou širokej verejnosti.',
+        'Návštevníci tu môžu obdivovať expozície náhodných objavov aj zachované pamätné tabule.',
+        'Areál ponúka jedinečný panoramatický pohľad na susedné Rakúsko a sútok dvoch riek.',
+        'Počas celého roka sa na hrade konajú rôzne kultúrne podujatia a historické rekonštrukcie.',
+        'Školské výpravy sem prichádzajú za názorným poznávaním stredovekých a starovekých dejín.',
+        'Odborníci neustále pracujú na spevňovaní obvodových múrov a reštaurovaní kamenných objektov.',
+        'Obľúbená vyhliadková veža Panenská vežička sa viaže k mnohým romantickým povestiam.',
+        'Prírodná rezervácia v okolí hradu je chráneným územím s vzácnou faunou a flórou.',
+        'Každý rok navštívi túto významnú lokalitu niekoľko stoviek tisíc domácich i zahraničných turistov.',
+        'Zachovanie tejto pamiatky pripomína budúcim generáciám korene našej štátnosti.'
+      ],
+      generateQuestions: function(isLong) {
+        let q = [];
+        // Task 1: Pravdivosť tvrdenia z textu
+        const opt1 = buildOptions("Zničenie hradu napoleonskými vojskami v roku 1809.", [
+          "Postavenie Panenskej vežičky starovekými Keltmi.",
+          "Úplný zánik hradu bez možnosti obnove v 20. storočí.",
+          "Vybudovanie prvej železnice na sútoku Dunaja a Moravy."
+        ]);
+        q.push({ type: 'mc', q: "Ktorá z nasledujúcich udalostí je priamo doložená v priloženom texte?", options: opt1.options, correct: opt1.correctKey, exp: "V 5. vete sa explicitne spomína zničenie pevnosti napoleonskými vojskami v roku 1809." });
+
+        // Task 2: Pravopisná analýza (Sami / Samé / I-Y)
+        const opt2 = buildOptions("podstatné meno v lokáli jednotného čísla", [
+          "prídavné meno v nominatíve množného čísla",
+          "sloveso v činnom rode",
+          "príslovka miesta"
+        ]);
+        q.push({ type: 'mc', q: "Urči gramatické kategórie a špecifikáciu slovného spojenia <i>'na sútoku'</i> (2. veta):", options: opt2.options, correct: opt2.correctKey, exp: "Predložka 'na' v spojení s podstatným menom 'sútoku' vyjadruje 6. pád (lokál) sg." });
+
+        // Task 3: Štylistika
+        const opt3 = buildOptions("náučný (odborný) štýl", ["administratívny štýl", "umelecký štýl", "rečnícky štýl"]);
+        q.push({ type: 'mc', q: "Do akého jazykového štýlu zaraďujeme tento text na základe faktografických údajov a objektívnosti?", options: opt3.options, correct: opt3.correctKey, exp: "Ide o populárno-náučný text s historickými faktami a odbornými termínmi." });
+
+        // Task 4: Vypísanie číslovky
+        q.push({
+          type: 'input',
+          q: "Napíš slovom základnú číslovku označujúcu rok spomínaný v 5. vete (<i>1809</i>):",
+          correct: ["tisícosemstodeväť", "tisíc osemsto deväť"],
+          exp: "Číslovka 1809 sa slovom píše: tisícosemstodeväť."
+        });
+
+        if (isLong) {
+          // Task 5: Synonymum pre prídavné meno
+          const opt5 = buildOptions("výhľadový, vyhodnocujúci celkový obzor", [
+            "úzky a neprehľadný",
+            "umelo vytvorený človekom",
+            "krátkodobý a nestály"
+          ]);
+          q.push({ type: 'mc', q: "Čo znamená prídavné meno <b>panoramatický</b> v spojení <i>'panoramatický pohľad'</i> (9. veta)?", options: opt5.options, correct: opt5.correctKey, exp: "Panoramatický pohľad znamená široký, celkový výhľad na krajinu." });
+
+          // Task 6: Vetná skladba
+          const opt6 = buildOptions("prístupnou", ["dnes", "je", "pamiatkou"]);
+          q.push({ type: 'mc', q: "Ktoré slovo v 7. vete vystupuje ako <b>rozvíjajúci zhodný prívlastok</b> k slovu <i>pamiatkou</i>?", options: opt6.options, correct: opt6.correctKey, exp: "Prídavné meno 'prístupnou' rozvíja podstatné meno pamiatkou (akou pamiatkou? prístupnou)." });
+        }
+        return q;
+      }
+    },
+    {
+      category: 'encyclopedia',
+      title: 'Adaptácia živočíchov na zimné obdobie',
+      author: 'Encyklopédia prírody',
+      sentencesShort: [
+        'S príchodom chladných zimných mesiacov musia živočíchy čeliť nedostatku potravy a nízkym teplotám.',
+        'Niektoré druhy vtákov odlietajú do teplých krajín, čo nazývame sezónnou migráciou.',
+        'Cicavce ako medveď či svišť prečkávajú nepriaznivé obdobie v stave pravého alebo nepravého zimného spánku.',
+        'Počas hibernácie sa im výrazne spomalí srdcový tep, dýchanie a telesná teplota klesne na minimum.',
+        'Iné zvieratá si vytvárajú hustejšiu zimnú srsť a robia si zásoby potravy v tajných úkrytoch.',
+        'Hmyz väčšinou prežíva zimu vo forme vajíčok, kukiel alebo v úkrtoch pod kôrou stromov.',
+        'Tieto stratégie sú výsledkom dlhodobého evolučného vývoja a prispôsobenia sa podmienkam.',
+        'Narušenie ich prirodzeného prostredia človekom môže tieto citlivé mechanizmy vážne ohroziť.',
+        'Prikrmovanie vtáctva v zime pomáha mnohým druhom prežiť najťažšie obdobie bez ujmy.',
+        'Správne prikrmovanie však vyžaduje znalosť vhodnej potravy, aby sme zvieratám neuškodili.'
+      ],
+      sentencesLong: [
+        'S príchodom chladných zimných mesiacov musia živočíchy čeliť nedostatku potravy a nízkym teplotám.',
+        'Niektoré druhy vtákov odlietajú do teplých krajín, čo nazývame sezónnou migráciou.',
+        'Cicavce ako medveď či svišť prečkávajú nepriaznivé obdobie v stave pravého alebo nepravého zimného spánku.',
+        'Počas hibernácie sa im výrazne spomalí srdcový tep, dýchanie a telesná teplota klesne na minimum.',
+        'Iné zvieratá si vytvárajú hustejšiu zimnú srsť a robia si zásoby potravy v tajných úkrytoch.',
+        'Hmyz väčšinou prežíva zimu vo forme vajíčok, kukiel alebo v úkrtoch pod kôrou stromov.',
+        'Tieto stratégie sú výsledkom dlhodobého evolučného vývoja a prispôsobenia sa podmienkam.',
+        'Narušenie ich prirodzeného prostredia človekom môže tieto citlivé mechanizmy vážne ohroziť.',
+        'Prikrmovanie vtáctva v zime pomáha mnohým druhom prežiť najťažšie obdobie bez ujmy.',
+        'Ochrancovia prírody upozorňujú na nevhodnosť solenej či prachom znečistenej potravy pre vtáky.',
+        'Najlepším krmivom pre lesné vtáctvo sú slnečnicové semená, orechy a sušené ovocie.',
+        'Dôležité je tiež umiestnenie kŕmidla na bezpečné miesto pred dravcami a mačkami.',
+        'Sledovanie správania zvierat na kŕmidlách prináša cenné informácie pre ornitológov.',
+        'Deti v školách sa prostredníctvom takýchto aktivít učia zodpovednému vzťahu k prírode.',
+        'Ochrana fauny v zimnom období je neoddeliteľnou súčasťou ochrany prírodného bohatstva.',
+        'Správne prikrmovanie vyžaduje znalosť vhodnej potravy, aby sme zvieratám neuškodili.'
+      ],
+      generateQuestions: function(isLong) {
+        let q = [];
+        // Task 1: Odborný termín
+        const opt1 = buildOptions("hibernácia", ["migrácia", "adaptácia", "fotosyntéza"]);
+        q.push({ type: 'mc', q: "Aký odborný termín (cudzie slovo) sa v 4. vete používa pre označenie <b>zimného spánku</b>?", options: opt1.options, correct: opt1.correctKey, exp: "Slovo hibernácia je biologický odborný výraz pre zimný spánok živočíchov." });
+
+        // Task 2: Pádová otázka podstatného mena
+        const opt2 = buildOptions("Genitív množného čísla (G pl.)", ["Nominatív jednotného čísla (N sg.)", "Akuzatív množného čísla (A pl.)", "Datív jednotného čísla (D sg.)"]);
+        q.push({ type: 'mc', q: "V akom páde a čísle sa nachádza slovo <i>'živočíchy'</i> v 1. vete <i>('musia živočíchy čeliť...')</i>?", options: opt2.options, correct: opt2.correctKey, exp: "Kto/čo musí čeliť? živočíchy = Nominatív množného čísla (N pl.)." });
+
+        // Task 3: Hlavná myšlienka
+        const opt3 = buildOptions("Opísať rôzne stratégie prežitia živočíchov v nepriaznivých zimných podmienkach.", [
+          "Vysvetliť postup pri stavbe vtáčích kŕmidiel v meste.",
+          "Zrovnať anatomickú stavbu tela vtákov a cicavcov.",
+          "Dokázať škodlivosť lesnej zveri na poľnohospodárske plody."
+        ]);
+        q.push({ type: 'mc', q: "Čo je hlavnou myšlienkou tohto odborného textu?", options: opt3.options, correct: opt3.correctKey, exp: "Text systematicky vysvetľuje prispôsobenie živočíchov na zimu." });
+
+        // Task 4: Slovesný tvar
+        q.push({
+          type: 'input',
+          q: "Vypíš z 2. vety <b>sloveso v neurčitku</b> alebo v prítomnom čase vyjadrujúce pomenovanie deja (<i>'čo nazývame...'</i>):",
+          correct: ["nazývame", "nazývať"],
+          exp: "Príslušné sloveso je 'nazývame' (neurčitok: nazývať)."
+        });
+
+        if (isLong) {
+          // Task 5: Odvodenie prídavných mien
+          const opt5 = buildOptions("prirodzeného -> príroda, evolučného -> evolúcia", [
+            "zimných -> zima, citlivé -> citoslovce",
+            "potravy -> tráva, dýchanie -> dych",
+            "kŕmidla -> krmivo, vtáctva -> vták"
+          ]);
+          q.push({ type: 'mc', q: "Ktorá dvojica prídavných mien je správne odvodená od podstatných mien?", options: opt5.options, correct: opt5.correctKey, exp: "Prídavné meno prirodzený pochádza od 'príroda', evolučný od 'evolúcia'." });
+
+          // Task 6: Antonymum
+          const opt6 = buildOptions("dostatok", ["úbytok", "hlad", "chlad"]);
+          q.push({ type: 'mc', q: "Ktoré slovo je <b>antonymom (opozitom)</b> k slovu <i>nedostatok</i> (1. veta)?", options: opt6.options, correct: opt6.correctKey, exp: "Opakom slova nedostatok je dostatok." });
+        }
+        return q;
+      }
+    },
+    {
+      category: 'biography',
+      title: 'Milan Rastislav Štefánik',
+      author: 'Biografické štúdie',
+      sentencesShort: [
+        'Milan Rastislav Štefánik bol významný slovenský astronóm, politik, diplomat a generál francúzskej armády.',
+        'Narodil sa v Košariskách v rodine evanjelického kňaza ako šieste z dvanástich detí.',
+        'Študoval astronómiu na Karlovej univerzite v Prahe, kde získal titul doktora filozofie.',
+        'Jeho vedecká dráha ho priviedla do Paríža, kde pracoval v slávnom observatóriu v Meudone.',
+        'Podnikol mnohé vedecké výpravy za pozorovaním zatmenia Slnka po celom svete.',
+        'Počas prvej svetovej vojny sa zaslúžil o organizovanie československých légií v zahraničí.',
+        'Spolu s Tomášom Garriguom Masarykom a Edvardom Benešom sa stal zakladateľom prvej ČSR.',
+        'Jeho tragická smrť pri havárii lietadla v roku 1919 zasiahla celý národ.',
+        'Miestom jeho posledného odpočinku sa stala majestátna Mohyla na Bradle.',
+        'Jeho životné heslo „Veriť, milovať, pracovať“ zostáva inšpiráciou dodnes.'
+      ],
+      sentencesLong: [
+        'Milan Rastislav Štefánik bol významný slovenský astronóm, politik, diplomat a generál francúzskej armády.',
+        'Narodil sa v Košariskách v rodine evanjelického kňaza ako šieste z dvanástich detí.',
+        'Študoval astronómiu na Karlovej univerzite v Prahe, kde získal titul doktora filozofie.',
+        'Jeho vedecká dráha ho priviedla do Paríža, kde pracoval v slávnom observatóriu v Meudone.',
+        'Podnikol mnohé vedecké výpravy za pozorovaním zatmenia Slnka po celom svete.',
+        'Počas prvej svetovej vojny sa zaslúžil o organizovanie československých légií v zahraničí.',
+        'Spolu s Tomášom Garriguom Masarykom a Edvardom Benešom sa stal zakladateľom prvej ČSR.',
+        'Jeho tragická smrť pri havárii lietadla v roku 1919 zasiahla celý národ.',
+        'Miestom jeho posledného odpočinku sa stala majestátna Mohyla na Bradle od architekta Dušana Jurkoviča.',
+        'Dielo tohto architekta dokonale spája národné prvky s modernejšou architektúrou.',
+        'Štefánik bol nositeľom mnohých francúzskych i medzinárodných vedeckých a vojenských ocenení.',
+        'Jeho meno dnes nosí medzinárodné letisko v Bratislave aj mnohé ulice po celom Slovensku.',
+        'Pamätné izby a múzeá uchovávajú jeho osobné predmety, fotografie a astronómske prístroje.',
+         me 'Každoročné spomienkové slávnosti na Bradle priťahujú tisíce obyvateľov zo všetkých regiónov.',
+        'Osobnosť M. R. Štefánika predstavuje spájajúci prvok medzi slovenskou a európskou históriou.',
+        'Jeho životné heslo „Veriť, milovať, pracovať“ zostáva inšpiráciou dodnes.'
+      ],
+      generateQuestions: function(isLong) {
+        let q = [];
+        // Task 1: Určenie podmetu
+        const opt1 = buildOptions("Milan Rastislav Štefánik", ["astronóm", "generál", "armády"]);
+        q.push({ type: 'mc', q: "Kto/čo je <b>gramatickým podmetom</b> v 1. vete ukázky?", options: opt1.options, correct: opt1.correctKey, exp: "Podmetom v 1. vete je vlastné meno 'Milan Rastislav Štefánik'." });
+
+        // Task 2: Význam citátu / príslovia
+        const opt2 = buildOptions("Mravné hodnoty, vlastenectvo a vytrvalá práca pre celok.", [
+          "Túžba po rýchlom zbohatnutí bez usilovnosti.",
+          "Záujem o cestovanie výhradne za účelom zábavy.",
+          "Vojenská agresia a presadzovanie vlastnej moci."
+        ]);
+        q.push({ type: 'mc', q: "Čo vyjadruje Štefánikovo heslo <i>„Veriť, milovať, pracovať“</i> spomenuté v závere ukážky?", options: opt2.options, correct: opt2.correctKey, exp: "Heslo zdôrazňuje morálne základy, lásku k národu a pracovitosť." });
+
+        // Task 3: Pravopis vybraných slov / vlastných mien
+        const opt3 = buildOptions("Košariská, Paríž, Praha, Bradlo", [
+          "košariská, paríž, praha, bradlo",
+          "Košariská, Paríž, praha, Bradlo",
+          "košariská, Paríž, Praha, bradlo"
+        ]);
+        q.push({ type: 'mc', q: "Ktorá možnosť obsahuje IBA správne napísané vlastné geografické mená z textu?", options: opt3.options, correct: opt3.correctKey, exp: "Všetky vlastné mená miest a geografických objektov píšeme s veľkým začiatočným písmenom." });
+
+        // Task 4: Slovný druh pre slovo
+        q.push({
+          type: 'input',
+          q: "Urči <b>slovný druh</b> slova <i>'dvanástich'</i> (2. veta):",
+          correct: ["číslovka", "základná číslovka"],
+          exp: "Slovo 'dvanástich' označuje počet, ide o základnú číslovku."
+        });
+
+        if (isLong) {
+          // Task 5: Syntax - Vedľajšia veta
+          const opt5 = buildOptions("prívlastková vedľajšia veta", ["podmetová vedľajšia veta", "príslovková vedľajšia veta miesta", "predmetová vedľajšia veta"]);
+          q.push({ type: 'mc', q: "Aký druh vedľajšej vety sa nachádza v súvetí <i>'...v Prahe, kde získal titul doktora filozofie'</i> (3. veta)?", options: opt5.options, correct: opt5.correctKey, exp: "Vedľajšia veta rozvíja podstatné meno Praha (v akej Prahe? kde získal titul...) -> prívlastková." });
+
+          // Task 6: Slovná zásoba
+          const opt6 = buildOptions("observatórium", ["légií", "filozofie", "mohyla"]);
+          q.push({ type: 'mc', q: "Ktoré z nasledujúcich slov je <b>hvezdárskym odborným termínom</b>?", options: opt6.options, correct: opt6.correctKey, exp: "Observatórium znamená hvezdáreň / vedecké pracisko na pozorovanie hviezd." });
+        }
+        return q;
+      }
+    }
+  ];
+
+  /* ========================================================
+     BANKA VŠEOBECNÝCH GRAMATICKÝCH ÚLOH (5.-9. ROČNÍK)
+     ======================================================== */
+  const globalGrammarBank = [
+    {
+      type: 'mc',
+      q: "V ktorej z nasledujúcich viet sa nachádza <b>viacnásobný vetný člen</b>?",
+      correct: "Na území Slovenska žijú medvede a kamzíky.",
+      distractors: [
+        "Deviataci chodili pravidelne na doučovanie z matematiky.",
+        "Peťo vyliezol s novým ďalekohľadom na marhuľu.",
+        "Dnes sme písali náročnú kontrolnú prácu z biológie."
+      ],
+      exp: "Slová 'medvede a kamzíky' tvoria viacnásobný podmet spojený spojkou a."
+    },
+    {
+      type: 'mc',
+      q: "V ktorej možnosti sú všetky slová napísané pravopisne správne?",
+      correct: "mydlo, ľudový, sýkorka",
+      distractors: [
+        "rýchly, cibula, mišlienka",
+        "nábytok, obilie, visoký",
+        "bolavý, pýcha, korito"
+      ],
+      exp: "V slovách mydlo a sýkorka píšeme tvrdé y po obojakej spoluhláske podľa vybraných slov."
+    },
+    {
+      type: 'input',
+      q: "Rozdeľ správne slovo <i>najmladšia</i> na slabiky (použi pomlčky, napr. a-bo-ho):",
+      correct: ["naj-mlad-šia"],
+      exp: "Slovo najmladšia sa delí na slabiky takto: naj-mlad-šia."
+    },
+    {
+      type: 'input',
+      q: "Napíš pravopisne a gramaticky správne slovné spojenie <i>španielsky jazyk</i> ako <b>jednoslovné pomenovanie</b>:",
+      correct: ["španielčina"],
+      exp: "Jednoslovné vyjadrenie pojmu španielsky jazyk je podstatné meno španielčina."
+    },
+    {
+      type: 'mc',
+      q: "Ako sa nazýva krátky epický útvar, ktorého cieľom je podať mravné ponaučenie a v ktorom vystupujú väčšinou zvieratá?",
+      correct: "bájka",
+      distractors: ["rozprávka", "povesť", "poviedka"],
+      exp: "Bájka je alegorický literárny žáner, v ktorom zvieratá nosia ľudské vlastnosti a nesie poučenie."
+    },
+    {
+      type: 'mc',
+      q: "V ktorej možnosti je použité <b>správne vykanie</b>?",
+      correct: "Mohli by ste mi, prosím, podať ten pohár?",
+      distractors: [
+        "Bol by ste taký ochotný a odviezol ma?",
+        "Povedala ste to susede už včera?",
+        "Robil ste tento projekt úplne sám?"
+      ],
+      exp: "Pri vykaní má sloveso v minulom čase tvar 2. osoby množného čísla (Mohli by ste)."
+    },
+    {
+      type: 'mc',
+      q: "Ktorá z nasledujúcich možností obsahuje IBA prídavné mená?",
+      correct: "hravý, včelí, študentský, drevený",
+      distractors: [
+        "hrať, včela, študent, drevo",
+        "hravo, včera, študentsky, drevene",
+        "hravosť, včelár, štúdium, drevár"
+      ],
+      exp: "Všetky dané slová odpovedajú na otázky Aký? Čí? a patria medzi prídavné mená."
+    },
+    {
+      type: 'mc',
+      q: "Urči umelecký jazykový prostriedok v spojení <i>'zlaté slnko usmievalo sa na krajinu'</i>:",
+      correct: "personifikácia (stotožnenie)",
+      distractors: ["prirovnanie", "metonymia", "hyperbola"],
+      exp: "Neživému objektu (slnku) sa pripisuje ľudská vlastnosť a činnosť (usmievať sa)."
+    },
+    {
+      type: 'input',
+      q: "Utvor tvar 3. osoby množného čísla prítomného času od slovesa <i>kresliť</i>:",
+      correct: ["kreslia"],
+      exp: "Tvar 3. osoby mn. č. je: oni/ony kreslia."
+    },
+    {
+      type: 'mc',
+      q: "V ktorej z uvedených viet sa nachádza <b>neurčité/záporné zámeno</b>?",
+      correct: "Nikto z prítomných žiakov nevedel odpoveď.",
+      distractors: [
+        "Usilovala sa veľmi usilovne celú hodinu.",
+        "Rýchlo utekal domov pred búrkou.",
+        "Zajtra určite príde vzácna návšteva."
+      ],
+      exp: "Slovo 'nikto' je záporné zámeno."
+    }
+  ];
+
+  /* ========================================================
+     Aplikácia & Logika
+     ======================================================== */
+  let activeTasks = [];
+  let userAnswers = {};
+  let timerInterval = null;
+  let secondsElapsed = 0;
+  let currentStudent = '';
+  let testHistory = JSON.parse(localStorage.getItem('t9_history_sk_v2')) || [];
+
+  function startTest() {
+    const nameInput = document.getElementById('studentName').value.trim();
+    if (!nameInput) {
+      alert('Prosím, zadajte meno a priezvisko žiaka!');
+      return;
+    }
+
+    currentStudent = nameInput;
+    const textCount = parseInt(document.getElementById('textCount').value);
+
+    document.getElementById('displayName').innerText = `Žiak: ${currentStudent}`;
+    document.getElementById('displayDetails').innerText = `Počet textov: ${textCount}`;
+    
+    document.getElementById('startPanel').style.display = 'none';
+    document.getElementById('testArea').style.display = 'block';
+
+    userAnswers = {};
+    secondsElapsed = 0;
+    startTimer();
+    generateTestPaper(textCount);
+  }
+
+  function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      secondsElapsed++;
+      const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+      const secs = String(secondsElapsed % 60).padStart(2, '0');
+      document.getElementById('timer').innerText = `Čas: ${mins}:${secs}`;
+    }, 1000);
+  }
+
+  function generateTestPaper(textCount) {
+    const container = document.getElementById('dynamicContent');
+    container.innerHTML = '';
+    activeTasks = [];
+    let globalTaskIndex = 1;
+
+    // Vyberieme požadovaný počet RÔZNYCH žánrových textov
+    const selectedTexts = shuffleArray(textBank).slice(0, textCount);
+
+    selectedTexts.forEach((item, i) => {
+      // Náhodne určíme, či ide o kratšiu alebo dlhšiu verziu textu
+      const isLong = Math.random() < 0.5;
+      const sentences = isLong ? item.sentencesLong : item.sentencesShort;
+      const qCount = isLong ? 6 : 4;
+
+      const readingCard = document.createElement('div');
+      readingCard.className = 'reading-card';
+      readingCard.innerHTML = `
+        <div class="reading-header">Ukážka ${i + 1} (${isLong ? 'Dlhá ukážka: 16 viet → 6 úloh' : 'Kratšia ukážka: 10 viet → 4 úlohy'})</div>
+        <div class="reading-content">
+          <div class="author">${item.author}</div>
+          <h3>${item.title}</h3>
+          ${sentences.map((s, idx) => `<p><b>[${idx + 1}]</b> ${s}</p>`).join('')}
+        </div>
+      `;
+      container.appendChild(readingCard);
+
+      const readingQuestions = item.generateQuestions(isLong);
+
+      const sectionTitle = document.createElement('div');
+      sectionTitle.className = 'section-title';
+      sectionTitle.innerText = `Úlohy k Ukážke ${i + 1} (Úlohy č. ${globalTaskIndex} – ${globalTaskIndex + readingQuestions.length - 1})`;
+      container.appendChild(sectionTitle);
+
+      readingQuestions.forEach(task => {
+        const taskNum = globalTaskIndex++;
+        const taskObj = { ...task, displayId: taskNum };
+        activeTasks.push(taskObj);
+        renderTaskCard(container, taskObj, taskNum);
+      });
+    });
+
+    // Vždy 5 všeobecných gramatických otázok
+    const grammarSectionTitle = document.createElement('div');
+    grammarSectionTitle.className = 'section-title';
+    grammarSectionTitle.innerText = `Všeobecné gramatické a literárne úlohy (Úlohy č. ${globalTaskIndex} – ${globalTaskIndex + 4})`;
+    container.appendChild(grammarSectionTitle);
+
+    const selectedGrammarTasks = shuffleArray(globalGrammarBank).slice(0, 5);
+    selectedGrammarTasks.forEach(gTask => {
+      const taskNum = globalTaskIndex++;
+      let taskObj = { ...gTask, displayId: taskNum };
+
+      if (gTask.type === 'mc' && !gTask.options) {
+        const built = buildOptions(gTask.correct, gTask.distractors);
+        taskObj.options = built.options;
+        taskObj.correct = built.correctKey;
+      }
+
+      activeTasks.push(taskObj);
+      renderTaskCard(container, taskObj, taskNum);
+    });
+  }
+
+  function renderTaskCard(container, task, taskNum) {
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.id = `task-card-${taskNum}`;
+
+    let html = `
+      <div>
+        <span class="task-number">${taskNum}.</span>
+        <div class="task-question">${task.q}</div>
+      </div>
+    `;
+
+    if (task.type === 'mc') {
+      html += `<div class="options-grid">`;
+      task.options.forEach(opt => {
+        html += `
+          <div class="option-item" id="opt-${taskNum}-${opt.key}" onclick="selectOption(${taskNum}, '${opt.key}')">
+            <div class="option-circle">${opt.key}</div>
+            <div>${opt.text}</div>
+          </div>
+        `;
+      });
+      html += `</div>`;
+    } else if (task.type === 'input') {
+      html += `
+        <div class="input-task-container">
+          <input type="text" class="input-line" id="input-${taskNum}" 
+                 placeholder="Napíš odpoveď..." oninput="saveInputAnswer(${taskNum})">
+        </div>
+      `;
+    }
+
+    html += `<div id="feedback-${taskNum}"></div>`;
+    card.innerHTML = html;
+    container.appendChild(card);
+  }
+
+  function selectOption(taskId, key) {
+    userAnswers[taskId] = key;
+    const task = activeTasks.find(t => t.displayId === taskId);
+    if (task && task.options) {
+      task.options.forEach(opt => {
+        const el = document.getElementById(`opt-${taskId}-${opt.key}`);
+        if (el) {
+          if (opt.key === key) el.classList.add('selected');
+          else el.classList.remove('selected');
+        }
+      });
+    }
+  }
+
+  function saveInputAnswer(taskId) {
+    const val = document.getElementById(`input-${taskId}`).value.trim();
+    userAnswers[taskId] = val;
+  }
+
+  function calculateGrade(percentage) {
+    if (percentage >= 90) return 1;
+    if (percentage >= 75) return 2;
+    if (percentage >= 50) return 3;
+    if (percentage >= 30) return 4;
+    return 5;
+  }
+
+  function evaluateTest() {
+    clearInterval(timerInterval);
+    let correctCount = 0;
+    const totalCount = activeTasks.length;
+
+    activeTasks.forEach(task => {
+      const card = document.getElementById(`task-card-${task.displayId}`);
+      const feedback = document.getElementById(`feedback-${task.displayId}`);
+      const userAns = userAnswers[task.displayId];
+      let isCorrect = false;
+
+      if (task.type === 'mc') {
+        if (userAns === task.correct) isCorrect = true;
+      } else if (task.type === 'input') {
+        if (userAns && task.correct.some(c => c.toLowerCase() === userAns.toLowerCase())) {
+          isCorrect = true;
+        }
+      }
+
+      const correctDisplay = task.type === 'mc' ? task.correct : task.correct[0];
+
+      if (isCorrect) {
+        correctCount++;
+        card.className = 'task-card correct';
+        feedback.innerHTML = `
+          <div class="feedback-box correct">
+            <strong>✓ Správne!</strong>
+            <div class="explanation"><b>Vysvetlenie:</b> ${task.exp}</div>
+          </div>
+        `;
+      } else {
+        card.className = 'task-card incorrect';
+        feedback.innerHTML = `
+          <div class="feedback-box incorrect">
+            <strong>✗ Nesprávne.</strong> Správna odpoveď: <b>${correctDisplay}</b>
+            <div class="explanation"><b>Vysvetlenie:</b> ${task.exp}</div>
+          </div>
+        `;
+      }
+    });
+
+    const percentage = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+    const grade = calculateGrade(percentage);
+
+    const resultObj = {
+      date: new Date().toLocaleDateString('sk-SK') + ' ' + new Date().toLocaleTimeString('sk-SK', {hour:'2-digit', minute:'2-digit'}),
+      name: currentStudent,
+      score: `${correctCount} / ${totalCount}`,
+      percentage: percentage,
+      grade: grade,
+      duration: secondsElapsed
+    };
+
+    testHistory.push(resultObj);
+    localStorage.setItem('t9_history_sk_v2', JSON.stringify(testHistory));
+
+    document.getElementById('submitBtn').disabled = true;
+    showResultsModal(resultObj);
+  }
+
+  function getAveragePercentage() {
+    if (testHistory.length === 0) return 0;
+    const sum = testHistory.reduce((acc, item) => acc + item.percentage, 0);
+    return Math.round(sum / testHistory.length);
+  }
+
+  function showResultsModal(currentResult) {
+    const modal = document.getElementById('historyModal');
+    const modalBody = document.getElementById('modalBody');
+    const mins = Math.floor(currentResult.duration / 60);
+    const secs = currentResult.duration % 60;
+
+    modalBody.innerHTML = `
+      <div class="stats-card">
+        <div class="stats-item">
+          <h4>Výsledok</h4>
+          <p>${currentResult.score}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Úspešnosť</h4>
+          <p>${currentResult.percentage}%</p>
+        </div>
+        <div class="stats-item">
+          <h4>Známka</h4>
+          <p>${currentResult.grade}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Čas</h4>
+          <p>${mins}m ${secs}s</p>
+        </div>
+      </div>
+      
+      <h3>História testov:</h3>
+      ${renderHistoryTable()}
+    `;
+    modal.style.display = 'flex';
+  }
+
+  function openHistoryModal() {
+    const modal = document.getElementById('historyModal');
+    const modalBody = document.getElementById('modalBody');
+
+    modalBody.innerHTML = `
+      <div class="stats-card">
+        <div class="stats-item">
+          <h4>Počet testov</h4>
+          <p>${testHistory.length}</p>
+        </div>
+        <div class="stats-item">
+          <h4>Priemerná úspešnosť</h4>
+          <p>${getAveragePercentage()}%</p>
+        </div>
+      </div>
+      
+      <h3>História výsledkov:</h3>
+      ${renderHistoryTable()}
+    `;
+    modal.style.display = 'flex';
+  }
+
+  function renderHistoryTable() {
+    if (testHistory.length === 0) {
+      return '<p style="margin-top: 10px; text-align: center; color: #777;">Doposiaľ neboli absolvované žiadne testy.</p>';
+    }
+
+    let html = `
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Dátum</th>
+            <th>Meno</th>
+            <th>Skóre</th>
+            <th>Úspešnosť</th>
+            <th>Známka</th>
+            <th>Čas</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    testHistory.slice().reverse().forEach(item => {
+      const m = Math.floor(item.duration / 60);
+      const s = item.duration % 60;
+      html += `
+        <tr>
+          <td>${item.date}</td>
+          <td>${item.name}</td>
+          <td>${item.score}</td>
+          <td><b>${item.percentage}%</b></td>
+          <td><b>${item.grade}</b></td>
+          <td>${m}m ${s}s</td>
+        </tr>
+      `;
+    });
+
+    html += '</tbody></table>';
+    return html;
+  }
+
+  function closeHistoryModal() {
+    document.getElementById('historyModal').style.display = 'none';
+  }
+
+  function clearHistory() {
+    if (confirm('Naozaj chcete vymazať celú štatistiku testov?')) {
+      testHistory = [];
+      localStorage.removeItem('t9_history_sk_v2');
+      alert('Štatistika bola úspešne vymazaná.');
+      closeHistoryModal();
+    }
+  }
+</script>
+
+</body>
+</html>
